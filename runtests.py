@@ -26,7 +26,7 @@ def runtests(*argv):
 
     # Run tests.
     from django.core.management import execute_from_command_line
-    execute_from_command_line([sys.argv[0], 'test'] + opts.appname)
+    execute_from_command_line([sys.argv[0], 'test'] + opts.test)
 
     if opts.coverage:
         test_coverage.stop()
@@ -35,12 +35,11 @@ def runtests(*argv):
         test_coverage.report(file=sys.stdout)
 
 
-argparser = argparse.ArgumentParser(description='Run the tests for django-compositeform.')
-argparser.add_argument('appname', nargs='*')
+argparser = argparse.ArgumentParser(description='Run the tests.')
+argparser.add_argument('test', nargs='*')
 argparser.add_argument('--no-coverage', dest='coverage', action='store_const',
     const=False, default=True, help='Do not collect coverage data.')
 
 
 if __name__ == '__main__':
     runtests(*sys.argv[1:])
-
