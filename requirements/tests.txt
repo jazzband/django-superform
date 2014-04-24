@@ -1,0 +1,3 @@
+argparse
+coverage
+django-discover-runner
