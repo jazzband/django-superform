@@ -162,7 +162,7 @@ class CompositeFormMixin(object):
         Setup the formsets.
         '''
 
-        self.formsets = {}
+        self.formsets = SortedDict()
         for name, field in self.composite_fields.items():
             formset = field.get_formset(self, name)
             self.formsets[name] = formset
