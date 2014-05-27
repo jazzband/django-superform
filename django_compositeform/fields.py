@@ -140,3 +140,6 @@ class InlineFormSetField(FormSetField):
         kwargs = super(InlineFormSetField, self).get_formset_kwargs(form, name)
         kwargs.setdefault('instance', form.instance)
         return kwargs
+
+    def save(self, form, name, formset, commit):
+        return formset.save(commit=commit)

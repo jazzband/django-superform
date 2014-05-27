@@ -201,7 +201,9 @@ class CompositeModelFormMixin(CompositeFormMixin):
         '''
 
         for name, formset in self.formsets.items():
-            formset.save(commit=commit)
+            field = self.composite_fields[name]
+            if hasattr(field, 'save'):
+                field.save(self, name, formset, commit=commit)
 
         # Add the formsets' save_m2m() methods to the one that got attached to
         # the form.
