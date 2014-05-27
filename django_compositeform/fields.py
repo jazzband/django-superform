@@ -24,6 +24,15 @@ class FormSetField(object):
         self.creation_counter = FormSetField.creation_counter
         FormSetField.creation_counter += 1
 
+    def get_formset_class(self, form, name):
+        '''
+        Return the formset class that will be used for instantiation in
+        ``get_formset``. You can override this method in subclasses to change
+        the behaviour of the given formset class.
+        '''
+
+        return self.formset_class
+
     def get_formset_prefix(self, form, name):
         '''
         Return the prefix that is used for the formset.
@@ -50,7 +59,8 @@ class FormSetField(object):
         '''
 
         kwargs = self.get_formset_kwargs(form, name)
-        formset = self.formset_class(
+        formset_class = self.get_formset_class(form, name)
+        formset = formset_class(
             form.data if form.is_bound else None,
             form.files if form.is_bound else None,
             **kwargs)
