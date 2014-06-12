@@ -59,15 +59,15 @@ special in your view!
 Now to how you can access the instantiated formsets::
 
     >>> form = PostForm()
-    >>> form.formsets['comments']
+    >>> form.composite_fields['comments']
     <CommetFormSet: ...>
 
 Or in the template::
 
     {{ form.as_p }}
 
-    {{ form.formsets.comments.management_form }}
-    {% for fieldset_form in form.formsets.comments %}
+    {{ form.composite_fields.comments.management_form }}
+    {% for fieldset_form in form.composite_fields.comments %}
         {{ fieldset_form.as_p }}
     {% endfor %}
 
@@ -76,11 +76,11 @@ You're welcome.
 '''
 
 from django import forms
-from django.forms.forms import DeclarativeFieldsMetaclass, ErrorList
+from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
 from django.forms.models import ModelFormMetaclass
 from django.utils.datastructures import SortedDict
 from django.utils import six
-from .fields import FormSetField
+from .fields import CompositeField, FormField, FormSetField
 
 
 def get_declared_composite_fields(bases, attrs):
@@ -88,21 +88,22 @@ def get_declared_composite_fields(bases, attrs):
     Create a list of formset field instances from the passed in 'attrs', plus
     any similar fields on the base classes (in 'bases').
     """
-    formsets = [
+    composite_fields = [
         (field_name, attrs.pop(field_name))
         for field_name, obj in list(six.iteritems(attrs))
-        if isinstance(obj, FormSetField)]
+        if isinstance(obj, CompositeField)]
 
-    formsets.sort(key=lambda x: x[1].creation_counter)
+    composite_fields.sort(key=lambda x: x[1].creation_counter)
 
-    # If this class is subclassing another Form, add that Form's formsets.
+    # If this class is subclassing another Form, add that Form's
+    # composite_fields.
     # Note that we loop over the bases in *reverse*. This is necessary in
-    # order to preserve the correct order of formsets.
+    # order to preserve the correct order of composite fields.
     for base in bases[::-1]:
         if hasattr(base, 'composite_fields'):
-            formsets = list(six.iteritems(base.composite_fields)) + formsets
+            composite_fields = list(six.iteritems(base.composite_fields)) + composite_fields
 
-    return SortedDict(formsets)
+    return SortedDict(composite_fields)
 
 
 class DeclerativeCompositeFieldsMetaclass(type):
@@ -137,8 +138,8 @@ class CompositeModelFormMetaclass(
 
 class CompositeFormMixin(object):
     '''
-    The goal is to provide a mixin that makes handling of formsets on forms
-    really easy.
+    The goal is to provide a mixin that makes handling of formsets and forms on
+    forms really easy.
 
     It should allow something like::
 
@@ -155,17 +156,22 @@ class CompositeFormMixin(object):
 
     def __init__(self, *args, **kwargs):
         super(CompositeFormMixin, self).__init__(*args, **kwargs)
-        self._init_formsets()
+        self._init_composite_fields()
 
-    def _init_formsets(self):
+    def _init_composite_fields(self):
         '''
-        Setup the formsets.
+        Setup the forms and formsets.
         '''
 
+        self.forms = SortedDict()
         self.formsets = SortedDict()
         for name, field in self.composite_fields.items():
-            formset = field.get_formset(self, name)
-            self.formsets[name] = formset
+            if hasattr(field, 'get_form'):
+                form = field.get_form(self, name)
+                self.forms[name] = form
+            if hasattr(field, 'get_formset'):
+                formset = field.get_formset(self, name)
+                self.formsets[name] = formset
 
     def full_clean(self):
         '''
@@ -174,10 +180,14 @@ class CompositeFormMixin(object):
         '''
 
         super(CompositeFormMixin, self).full_clean()
-        for key, formset in self.formsets.items():
-            formset.full_clean()
-            if not formset.is_valid():
-                self._errors[key] = ErrorList(formset.errors)
+        for key, composite in self.forms.items():
+            composite.full_clean()
+            if not composite.is_valid():
+                self._errors[key] = ErrorDict(composite.errors)
+        for key, composite in self.formsets.items():
+            composite.full_clean()
+            if not composite.is_valid():
+                self._errors[key] = ErrorList(composite.errors)
 
 
 class CompositeModelFormMixin(CompositeFormMixin):
@@ -190,8 +200,45 @@ class CompositeModelFormMixin(CompositeFormMixin):
         '''
 
         saved_obj = super(CompositeModelFormMixin, self).save(commit=commit)
+        self.save_forms(commit=commit)
         self.save_formsets(commit=commit)
         return saved_obj
+
+    def _extend_save_m2m(self, name, composites):
+        additional_save_m2m = []
+        for composite in composites:
+            if hasattr(composite, 'save_m2m'):
+                additional_save_m2m.append(composite.save_m2m)
+
+        if not additional_save_m2m:
+            return
+
+        def additional_saves():
+            for save_m2m in additional_save_m2m:
+                save_m2m()
+
+        # The save() method was called before save_formsets(), so we will
+        # already have save_m2m() available.
+        if hasattr(self, 'save_m2m'):
+            _original_save_m2m = self.save_m2m
+        else:
+            _original_save_m2m = lambda: None
+        def augmented_save_m2m():
+            _original_save_m2m()
+            additional_saves()
+
+        self.save_m2m = augmented_save_m2m
+        setattr(self, name, additional_saves)
+
+    def save_forms(self, commit=True):
+        saved_composites = []
+        for name, composite in self.forms.items():
+            field = self.composite_fields[name]
+            if hasattr(field, 'save'):
+                field.save(self, name, composite, commit=commit)
+                saved_composites.append(composite)
+
+        self._extend_save_m2m('save_forms_m2m', saved_composites)
 
     def save_formsets(self, commit=True):
         '''
@@ -200,33 +247,14 @@ class CompositeModelFormMixin(CompositeFormMixin):
         methods.
         '''
 
-        for name, formset in self.formsets.items():
+        saved_composites = []
+        for name, composite in self.formsets.items():
             field = self.composite_fields[name]
             if hasattr(field, 'save'):
-                field.save(self, name, formset, commit=commit)
+                field.save(self, name, composite, commit=commit)
+                saved_composites.append(composite)
 
-        # Add the formsets' save_m2m() methods to the one that got attached to
-        # the form.
-        if not commit:
-            formsets_save_m2m = []
-            for name, formset in self.formsets.items():
-                formsets_save_m2m.append(formset.save_m2m)
-
-            def save_formsets_m2m():
-                for formset_save_m2m in formsets_save_m2m:
-                    formset_save_m2m()
-            self.save_formsets_m2m = save_formsets_m2m
-
-            form = self
-
-            # The save() method was called before save_formsets(), so we will
-            # already have save_m2m() available.
-            _original_save_m2m = self.save_m2m
-            def save_m2m_and_formsets_m2m():
-                _original_save_m2m()
-                form.save_formsets_m2m()
-
-            self.save_m2m = save_m2m_and_formsets_m2m
+        self._extend_save_m2m('save_formsets_m2m', saved_composites)
 
 
 class CompositeModelForm(CompositeModelFormMixin, forms.ModelForm):
