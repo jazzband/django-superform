@@ -89,24 +89,6 @@ class ModelFormField(FormField):
             return composite_form.save(commit=commit)
         return None
 
-#class ForeignKeyForm(forms.ModelForm):
-#    def __init__(self, *args, **kwargs):
-#        self.significant_fields = kwargs.pop('significant_fields', None)
-#        super(ForeignKeyForm, self).__init__(*args, **kwargs)
-#
-#    def is_valid(self):
-#        '''
-#        Form is valid if none of the significant fields
-#        '''
-#
-#        is_valid = super(ForeignKeyForm, self).is_valid()
-#        if not is_valid and self.significant_fields:
-#            significant_data = [
-#                self.cleaned_data.get(field, None)
-#                for field in self.significant_fields]
-#            if not any(significant_data):
-#                return True
-
 
 class ForeignKeyFormField(ModelFormField):
     def __init__(self, form_class, kwargs=None, field_name=None,
@@ -117,8 +99,8 @@ class ForeignKeyFormField(ModelFormField):
 
     def get_kwargs(self, form, name):
         kwargs = super(ForeignKeyFormField, self).get_kwargs(form, name)
-#        fields = self.significant_fields or getattr(form._meta, 'significant_fields', None)
-#        kwargs.setdefault('significant_fields', fields)
+        if 'instance' not in kwargs:
+            kwargs['instance'] = self.get_instance(form, name)
         return kwargs
 
     def get_form_class(self, form, name):
