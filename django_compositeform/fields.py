@@ -91,29 +91,50 @@ class ModelFormField(FormField):
 
 
 class ForeignKeyFormField(ModelFormField):
-    def __init__(self, form_class, kwargs=None, field_name=None,
-                 significant_fields=None):
+    def __init__(self, form_class, kwargs=None, field_name=None, blank=None):
         super(ForeignKeyFormField, self).__init__(form_class, kwargs)
         self.field_name = field_name
-        self.significant_fields = significant_fields
+        self.blank = blank
 
     def get_kwargs(self, form, name):
         kwargs = super(ForeignKeyFormField, self).get_kwargs(form, name)
         if 'instance' not in kwargs:
-            kwargs['instance'] = self.get_instance(form, name)
+            kwargs.setdefault('instance', self.get_instance(form, name))
+        if 'empty_permitted' not in kwargs:
+            if self.allow_blank(form, name):
+                kwargs['empty_permitted'] = True
         return kwargs
+
+    def get_field_name(self, form, name):
+        return self.field_name or name
+
+    def allow_blank(self, form, name):
+        '''
+        Allow blank determines if the form might be completely empty. If it's
+        empty it will result in a None as the saved value for the ForeignKey.
+        '''
+        if self.blank is not None:
+            return self.blank
+        model = form._meta.model
+        field = model._meta.get_field(self.get_field_name(form, name))
+        return field.blank
 
     def get_form_class(self, form, name):
         form_class = self.form_class
         return form_class
 
     def get_instance(self, form, name):
-        field_name = self.field_name or name
+        field_name = self.get_field_name(form, name)
         return getattr(form.instance, field_name)
 
     def save(self, form, name, composite_form, commit):
-        saved_obj = super(ForeignKeyFormField, self).save(form, name, composite_form, commit)
-        setattr(form.instance, self.field_name or name, saved_obj)
+        # Support the ``empty_permitted`` attribute. This is set if the field
+        # is ``blank=True`` .
+        if composite_form.empty_permitted and not composite_form.has_changed():
+            saved_obj = composite_form.instance
+        else:
+            saved_obj = super(ForeignKeyFormField, self).save(form, name, composite_form, commit)
+        setattr(form.instance, self.get_field_name(form, name), saved_obj)
         if commit:
             form.instance.save()
         else:
