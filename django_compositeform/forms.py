@@ -154,6 +154,22 @@ class CompositeFormMixin(object):
         super(CompositeFormMixin, self).__init__(*args, **kwargs)
         self._init_composite_fields()
 
+    def add_composite_field(self, name, field):
+        '''
+        Add a dynamic composite field to the already existing ones and
+        initialize it appropriatly.
+        '''
+        self.composite_fields[name] = field
+        self._init_composite_field(name, field)
+
+    def _init_composite_field(self, name, field):
+        if hasattr(field, 'get_form'):
+            form = field.get_form(self, name)
+            self.forms[name] = form
+        if hasattr(field, 'get_formset'):
+            formset = field.get_formset(self, name)
+            self.formsets[name] = formset
+
     def _init_composite_fields(self):
         '''
         Setup the forms and formsets.
@@ -162,12 +178,7 @@ class CompositeFormMixin(object):
         self.forms = SortedDict()
         self.formsets = SortedDict()
         for name, field in self.composite_fields.items():
-            if hasattr(field, 'get_form'):
-                form = field.get_form(self, name)
-                self.forms[name] = form
-            if hasattr(field, 'get_formset'):
-                formset = field.get_formset(self, name)
-                self.formsets[name] = formset
+            self._init_composite_field(name, field)
 
     def full_clean(self):
         '''
