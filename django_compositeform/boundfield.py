@@ -25,6 +25,15 @@ class CompositeBoundField(BoundField):
     # __len__, no changes required
     # __getitem__, no changes required
 
+    def __nonzero__(self):
+        '''
+        Never evaluate the bound field as False. This is necessary since
+        otherwise python will fallback to the __len__ implementation of the
+        object. However this might return 0 for a ``CompositeBoundField`` since
+        it might contain zero forms in the given formset.
+        '''
+        return True
+
     @property
     def errors(self):
         '''
