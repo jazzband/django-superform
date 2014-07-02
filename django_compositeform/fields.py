@@ -235,25 +235,42 @@ class InlineFormSetField(FormSetField):
 
     def __init__(self, parent_model=None, model=None, formset_class=None,
                  kwargs=None, **factory_kwargs):
-        if (formset_class, parent_model, model) == (None, None, None):
-            raise ValueError(
-                'You must either provide the formset_class attribute or '
-                'parent_model and model.')
-        if (
-                formset_class is not None and
-                (parent_model is not None or model is not None)):
-            raise ValueError(
-                'You must not provide the formset_class argument and '
-                'parent_model/model.')
+        '''
+        You need to either provide the ``formset_class`` or the ``model``
+        argument.
 
-        if not formset_class:
-            self.parent_model = parent_model
-            self.model = model
-            formset_class = inlineformset_factory(
-                self.parent_model,
-                self.model,
-                **factory_kwargs)
+        If the ``formset_class`` argument is not given, the ``model`` argument
+        is used to create the formset_class on the fly when needed by using the
+        ``inlineformset_factory``.
+        '''
+
+        self.parent_model = parent_model
+        self.model = model
+        self.formset_factory_kwargs = factory_kwargs
         super(InlineFormSetField, self).__init__(formset_class, kwargs=kwargs)
+
+    def get_model(self, form, name):
+        return self.model
+
+    def get_parent_model(self, form, name):
+        if self.parent_model is not None:
+            return self.parent_model
+        return form._meta.model
+
+    def get_formset_class(self, form, name):
+        '''
+        Either return the formset class that was provided as argument to the
+        __init__ method, or build one based on the ``parent_model`` and
+        ``model`` attributes.
+        '''
+
+        if self.formset_class is not None:
+            return self.formset_class
+        formset_class = inlineformset_factory(
+            self.get_parent_model(form, name),
+            self.get_model(form, name),
+            **self.formset_factory_kwargs)
+        return formset_class
 
     def get_kwargs(self, form, name):
         kwargs = super(InlineFormSetField, self).get_kwargs(form, name)
