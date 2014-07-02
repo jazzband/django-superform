@@ -80,7 +80,7 @@ from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
 from django.forms.models import ModelFormMetaclass
 from django.utils.datastructures import SortedDict
 from django.utils import six
-from .fields import CompositeField, FormField, FormSetField
+from .fields import CompositeField
 
 
 def get_declared_composite_fields(bases, attrs):
