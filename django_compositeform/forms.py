@@ -123,17 +123,13 @@ class DeclerativeCompositeFieldsMetaclass(type):
 class CompositeFormMixinMetaclass(
         DeclerativeCompositeFieldsMetaclass,
         DeclarativeFieldsMetaclass):
-    def __new__(cls, name, bases, attrs):
-        attrs['composite_fields'] = get_declared_composite_fields(bases, attrs)
-        return DeclarativeFieldsMetaclass.__new__(cls, name, bases, attrs)
+    pass
 
 
 class CompositeModelFormMetaclass(
         DeclerativeCompositeFieldsMetaclass,
         ModelFormMetaclass):
-    def __new__(cls, name, bases, attrs):
-        attrs['composite_fields'] = get_declared_composite_fields(bases, attrs)
-        return ModelFormMetaclass.__new__(cls, name, bases, attrs)
+    pass
 
 
 class CompositeFormMixin(object):
