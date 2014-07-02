@@ -237,7 +237,17 @@ class FormSetField(CompositeField):
         return formset
 
 
-class InlineFormSetField(FormSetField):
+class ModelFormSetField(FormSetField):
+    def shall_save(self, form, name, formset):
+        return True
+
+    def save(self, form, name, formset, commit):
+        if self.shall_save(form, name, formset):
+            return formset.save(commit=commit)
+        return None
+
+
+class InlineFormSetField(ModelFormSetField):
     '''
     The ``InlineFormSetField`` helps when you want to use a inline formset.
 
@@ -335,6 +345,3 @@ class InlineFormSetField(FormSetField):
         kwargs = super(InlineFormSetField, self).get_kwargs(form, name)
         kwargs.setdefault('instance', form.instance)
         return kwargs
-
-    def save(self, form, name, formset, commit):
-        return formset.save(commit=commit)

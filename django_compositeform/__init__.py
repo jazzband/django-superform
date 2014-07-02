@@ -1,4 +1,4 @@
-from .fields import FormField, ModelFormField, ForeignKeyFormField, FormSetField, InlineFormSetField
+from .fields import FormField, ModelFormField, ForeignKeyFormField, FormSetField, ModelFormSetField, InlineFormSetField
 from .forms import CompositeForm, CompositeModelForm
 from .widgets import FormWidget, FormSetWidget
 
