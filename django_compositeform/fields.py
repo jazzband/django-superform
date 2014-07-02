@@ -1,17 +1,62 @@
 from django.forms.models import inlineformset_factory
 
+from .widgets import FormWidget, FormSetWidget
 
-class CompositeField(object):
+
+class BaseCompositeField(object):
+    '''
+    The ``BaseCompositeField`` takes care of keeping some kind of compatibility
+    with the ``django.forms.Field`` class.
+    '''
+
+    widget = None
+    show_hidden_initial = False
 
     # Tracks each time a FormSetField instance is created. Used to retain
     # order.
     creation_counter = 0
+
+    def __init__(self, required=True, widget=None, label=None, help_text='',
+                 localize=False):
+        self.required = required
+        self.label = label
+        self.help_text = help_text
+
+        widget = widget or self.widget
+        if isinstance(widget, type):
+            widget = widget()
+
+        # Trigger the localization machinery if needed.
+        self.localize = localize
+        if self.localize:
+            widget.is_localized = True
+
+        # Let the widget know whether it should display as required.
+        widget.is_required = self.required
+
+        # We do not call self.widget_attrs() here as the original field is
+        # doing it.
+
+        self.widget = widget
+
+        # Increase the creation counter, and save our local copy.
+        self.creation_counter = BaseCompositeField.creation_counter
+        BaseCompositeField.creation_counter += 1
+
+
+class CompositeField(BaseCompositeField):
+    '''
+    Implements the base structure that is relevant for all composite fields.
+    '''
+
     prefix_name = 'composite'
 
-    def __init__(self):
-        # Increase the creation counter, and save our local copy.
-        self.creation_counter = CompositeField.creation_counter
-        CompositeField.creation_counter += 1
+    def __init__(self, *args, **kwargs):
+        super(CompositeField, self).__init__(*args, **kwargs)
+
+        # Let the widget know about the field for easier complex renderings in
+        # the template.
+        self.widget.field = self
 
     def get_prefix(self, form, name):
         '''
@@ -37,9 +82,10 @@ class CompositeField(object):
 
 class FormField(CompositeField):
     prefix_name = 'form'
+    widget = FormWidget
 
-    def __init__(self, form_class, kwargs=None):
-        super(FormField, self).__init__()
+    def __init__(self, form_class, kwargs=None, **field_kwargs):
+        super(FormField, self).__init__(**field_kwargs)
 
         self.form_class = form_class
         if kwargs is None:
@@ -91,8 +137,10 @@ class ModelFormField(FormField):
 
 
 class ForeignKeyFormField(ModelFormField):
-    def __init__(self, form_class, kwargs=None, field_name=None, blank=None):
-        super(ForeignKeyFormField, self).__init__(form_class, kwargs)
+    def __init__(self, form_class, kwargs=None, field_name=None, blank=None,
+                 **field_kwargs):
+        super(ForeignKeyFormField, self).__init__(form_class, kwargs,
+                                                  **field_kwargs)
         self.field_name = field_name
         self.blank = blank
 
@@ -133,14 +181,16 @@ class ForeignKeyFormField(ModelFormField):
         if composite_form.empty_permitted and not composite_form.has_changed():
             saved_obj = composite_form.instance
         else:
-            saved_obj = super(ForeignKeyFormField, self).save(form, name, composite_form, commit)
+            saved_obj = super(ForeignKeyFormField, self).save(form, name,
+                                                              composite_form,
+                                                              commit)
         setattr(form.instance, self.get_field_name(form, name), saved_obj)
         if commit:
             form.instance.save()
         else:
             raise NotImplementedError(
-                'ForeignKeyFormField cannot yet be used with non-commiting form '
-                'saves.')
+                'ForeignKeyFormField cannot yet be used with non-commiting '
+                'form saves.')
         return saved_obj
 
 
@@ -154,9 +204,10 @@ class FormSetField(CompositeField):
     '''
 
     prefix_name = 'formset'
+    widget = FormSetWidget
 
-    def __init__(self, formset_class, kwargs=None):
-        super(FormSetField, self).__init__()
+    def __init__(self, formset_class, kwargs=None, **field_kwargs):
+        super(FormSetField, self).__init__(**field_kwargs)
 
         self.formset_class = formset_class
         if kwargs is None:
@@ -244,10 +295,18 @@ class InlineFormSetField(FormSetField):
         ``inlineformset_factory``.
         '''
 
+        # Make sure that all standard arguments will get passed through to the
+        # parent's __init__ method.
+        field_kwargs = {}
+        for arg in ['required', 'widget', 'label', 'help_text', 'localize']:
+            if arg in factory_kwargs:
+                field_kwargs[arg] = factory_kwargs.pop(arg)
+
         self.parent_model = parent_model
         self.model = model
         self.formset_factory_kwargs = factory_kwargs
-        super(InlineFormSetField, self).__init__(formset_class, kwargs=kwargs)
+        super(InlineFormSetField, self).__init__(formset_class, kwargs=kwargs,
+                                                 **field_kwargs)
 
     def get_model(self, form, name):
         return self.model

@@ -80,6 +80,7 @@ from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
 from django.forms.models import ModelFormMetaclass
 from django.utils.datastructures import SortedDict
 from django.utils import six
+from .boundfield import CompositeBoundField
 from .fields import CompositeField
 
 
@@ -144,7 +145,7 @@ class CompositeFormMixin(object):
         ...     links = FormSetField(formset=LinkFormSet)
         ...
         >>> myform = MyForm()
-        >>> isinstance(myform.formsets['links'], LinkFormSet)
+        >>> isinstance(myform['links'], LinkFormSet)
         True
 
     Cleaning, validation, etc should work totally transparent.
@@ -154,6 +155,16 @@ class CompositeFormMixin(object):
         super(CompositeFormMixin, self).__init__(*args, **kwargs)
         self._init_composite_fields()
 
+    def __getitem__(self, name):
+        '''
+        Returns a BoundField for the given field name. It also returns
+        CompositeBoundField instances for composite fields.
+        '''
+        if name not in self.fields and name in self.composite_fields:
+            field = self.composite_fields[name]
+            return CompositeBoundField(self, field, name)
+        return super(CompositeFormMixin, self).__getitem__(name)
+
     def add_composite_field(self, name, field):
         '''
         Add a dynamic composite field to the already existing ones and
@@ -161,6 +172,16 @@ class CompositeFormMixin(object):
         '''
         self.composite_fields[name] = field
         self._init_composite_field(name, field)
+
+    def get_composite_field_value(self, name):
+        '''
+        Return the form/formset instance for the given field name.
+        '''
+        field = self.composite_fields[name]
+        if hasattr(field, 'get_form'):
+            return self.forms[name]
+        if hasattr(field, 'get_formset'):
+            return self.formsets[name]
 
     def _init_composite_field(self, name, field):
         if hasattr(field, 'get_form'):
