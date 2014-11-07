@@ -61,3 +61,14 @@ class FormFieldTests(TestCase):
         form = superform.forms['address_initial']
         self.assertEqual(form['street'].value(), 'Homebase 42')
         self.assertEqual(form['city'].value(), 'Supertown')
+
+    def test_initial_pass_through(self):
+        superform = RegistrationForm(initial={
+            'first_name': 'Patricia',
+            'address': {'street': 'Default Road'}
+        })
+        form = superform.forms['address']
+        self.assertEqual(superform['first_name'].value(), 'Patricia')
+        self.assertEqual(superform['last_name'].value(), None)
+        self.assertEqual(form['street'].value(), 'Default Road')
+        self.assertEqual(form['city'].value(), None)

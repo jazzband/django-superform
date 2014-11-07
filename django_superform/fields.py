@@ -68,13 +68,26 @@ class CompositeField(BaseCompositeField):
             prefix_name=self.prefix_name,
             field_name=name)
 
+    def get_initial(self, form, name):
+        """
+        Get the initial data that got passed into the superform for this
+        composite field. It should return ``None`` if no initial values where
+        given.
+        """
+
+        if hasattr(form, 'initial'):
+            return form.initial.get(name, None)
+        return None
+
+
     def get_kwargs(self, form, name):
         '''
         Return the keyword arguments that are used to instantiate the formset.
         '''
 
         kwargs = {
-            'prefix': self.get_prefix(form, name)
+            'prefix': self.get_prefix(form, name),
+            'initial': self.get_initial(form, name),
         }
         kwargs.update(self.default_kwargs)
         return kwargs
@@ -121,6 +134,15 @@ class FormField(CompositeField):
             address = FormField(AddressForm, kwargs={
                 'initial': {'street': 'Stairway to Heaven 1'}
             })
+
+    But you can also use nested initial values which you pass into the
+    superform::
+
+        RegistrationForm(initial={
+            'address': {'street': 'Highway to Hell 666'}
+        })
+
+    The first method (using ``kwargs``) will take precedence.
     """
 
     prefix_name = 'form'
