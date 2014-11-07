@@ -14,6 +14,11 @@ class AddressForm(forms.Form):
         super(AddressForm, self).__init__(*args, **kwargs)
 
 
+class MultiAddressForm(SuperForm):
+    address1 = FormField(AddressForm)
+    address2 = FormField(AddressForm)
+
+
 class RegistrationForm(SuperForm):
     first_name = forms.CharField()
     last_name = forms.CharField()
@@ -25,6 +30,7 @@ class RegistrationForm(SuperForm):
             'city': 'Supertown'
         }
     })
+    more_addresses = FormField(MultiAddressForm)
 
 
 class FormFieldTests(TestCase):
@@ -72,3 +78,22 @@ class FormFieldTests(TestCase):
         self.assertEqual(superform['last_name'].value(), None)
         self.assertEqual(form['street'].value(), 'Default Road')
         self.assertEqual(form['city'].value(), None)
+
+    def test_initial_pass_through_with_multiple_layers(self):
+        superform = RegistrationForm(initial={
+            'more_addresses': {
+                'address1': {
+                    'street': 'Fooway',
+                    'city': 'Testcity'
+                },
+                'address2': {
+                    'street': 'Barboulevard',
+                }
+            }
+        })
+        address1 = superform.forms['more_addresses'].forms['address1']
+        address2 = superform.forms['more_addresses'].forms['address2']
+        self.assertEqual(address1['street'].value(), 'Fooway')
+        self.assertEqual(address1['city'].value(), 'Testcity')
+        self.assertEqual(address2['street'].value(), 'Barboulevard')
+        self.assertEqual(address2['city'].value(), None)
