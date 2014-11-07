@@ -18,8 +18,9 @@ formset manually and you cannot use django's generic FormView_. So here comes
 .. _FormView: https://docs.djangoproject.com/en/1.6/ref/class-based-views/generic-editing/#formview
 
 Here we have an example for the usecase. Let's have a look at the
-``forms.py``::
+``forms.py``:
 
+.. code-block:: python
 
     from django import forms
     from django_superform import SuperModelForm, FormSetField
@@ -48,8 +49,9 @@ Here we have an example for the usecase. Let's have a look at the
 
 So we assign the ``EmailFormSet`` as a field directly to the ``SignupForm``.
 That's where it belongs! Ok and how do I handle this composite form in the
-view? Have a look::
+view? Have a look:
 
+.. code-block:: python
 
     def post_form(request):
         if request.method == 'POST':
@@ -69,7 +71,7 @@ No, we don't do anything different as we would do without having the
 logic in the form it self where it belongs and use generic views like
 ``CreateView`` you would use them with simple forms. Want an example for this?
 
-::
+.. code-block:: python
 
     from django.views.generic import CreateView
     from myapp.models import Account
