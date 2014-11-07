@@ -33,7 +33,7 @@ class SuperFormTests(TestCase):
         self.assertTrue(hasattr(form, 'composite_fields'))
         self.assertTrue(hasattr(form, 'formsets'))
 
-        self.assertEqual(form.formsets.keys(), ['emails'])
+        self.assertEqual(list(form.formsets.keys()), ['emails'])
         formset = form.formsets['emails']
         self.assertIsInstance(formset, EmailFormSet)
 

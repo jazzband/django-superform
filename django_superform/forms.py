@@ -289,9 +289,11 @@ class SuperModelFormMixin(SuperFormMixin):
         self._extend_save_m2m('save_formsets_m2m', saved_composites)
 
 
-class SuperModelForm(SuperModelFormMixin, forms.ModelForm):
-    __metaclass__ = SuperModelFormMetaclass
+class SuperModelForm(six.with_metaclass(SuperModelFormMetaclass,
+                                        SuperModelFormMixin, forms.ModelForm)):
+    pass
 
 
-class SuperForm(SuperFormMixin, forms.Form):
-    __metaclass__ = SuperFormMixinMetaclass
+class SuperForm(six.with_metaclass(SuperFormMixinMetaclass,
+                                   SuperFormMixin, forms.Form)):
+    pass
