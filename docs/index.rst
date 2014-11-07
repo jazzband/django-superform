@@ -1,22 +1,16 @@
-.. django-superform documentation master file, created by
-   sphinx-quickstart on Fri Nov  7 10:47:24 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+django-superform: nest all the forms!
+=====================================
 
-Welcome to django-superform's documentation!
-============================================
+A ``SuperForm`` lets you nest other forms and formsets inside a form. That way
+handling multiple forms on one page gets *super* easy.
 
-Contents:
+**Contents:**
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
+    quickstart
+    forms
+    fields
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+:ref:`genindex` | :ref:`modindex` | :ref:`search`
