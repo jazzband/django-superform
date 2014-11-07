@@ -106,7 +106,9 @@ def get_declared_composite_fields(bases, attrs):
     # order to preserve the correct order of composite fields.
     for base in bases[::-1]:
         if hasattr(base, 'composite_fields'):
-            composite_fields = list(six.iteritems(base.composite_fields)) + composite_fields
+            composite_fields = (
+                list(six.iteritems(base.composite_fields)) +
+                composite_fields)
 
     return OrderedDict(composite_fields)
 
@@ -255,6 +257,7 @@ class SuperModelFormMixin(SuperFormMixin):
             _original_save_m2m = self.save_m2m
         else:
             _original_save_m2m = lambda: None
+
         def augmented_save_m2m():
             _original_save_m2m()
             additional_saves()
