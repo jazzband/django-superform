@@ -81,6 +81,39 @@ class CompositeField(BaseCompositeField):
 
 
 class FormField(CompositeField):
+    """
+    A field that can be used to nest a form inside another form::
+
+        from django import forms
+        from django_superform import SuperForm
+
+        class AddressForm(forms.Form):
+            street = forms.CharField()
+            city = forms.CharField()
+
+        class RegistrationForm(SuperForm):
+            first_name = forms.CharField()
+            last_name = forms.CharField()
+            address = FormField(AddressForm)
+
+    You can then display the fields in the template with (given that
+    ``registration_form`` is an instance of ``RegistrationForm``)::
+
+        {{ registration_form.address.street }}
+        {{ registration_form.address.street.errors }}
+        {{ registration_form.address.city }}
+        {{ registration_form.address.city.errors }}
+
+    The fields will all have a prefix in their name so that the naming does not
+    clash with other forms on the page. The name attribute of the input for the
+    ``street`` field in this example will be: ``form-address-street``. The name
+    will also change if you set a prefix on the superform::
+
+        form = RegistrationForm(prefix='registration')
+
+    Then the field name will change to ``registration-form-address-street``.
+    """
+
     prefix_name = 'form'
     widget = FormWidget
 
