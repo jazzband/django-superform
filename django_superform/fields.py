@@ -105,13 +105,22 @@ class FormField(CompositeField):
         {{ registration_form.address.city.errors }}
 
     The fields will all have a prefix in their name so that the naming does not
-    clash with other forms on the page. The name attribute of the input for the
-    ``street`` field in this example will be: ``form-address-street``. The name
-    will also change if you set a prefix on the superform::
+    clash with other fields on the page. The name attribute of the input tag for
+    the ``street`` field in this example will be: ``form-address-street``. The
+    name will change if you set a prefix on the superform::
 
         form = RegistrationForm(prefix='registration')
 
-    Then the field name will change to ``registration-form-address-street``.
+    Then the field name will be ``registration-form-address-street``.
+
+    You can pass the ``kwargs`` argument to the ``__init__`` method in order to
+    give keyword arguments that you want to pass through to the form when it is
+    instaniated. So you could use this to pass in initial values::
+
+        class RegistrationForm(SuperForm):
+            address = FormField(AddressForm, kwargs={
+                'initial': {'street': 'Stairway to Heaven 1'}
+            })
     """
 
     prefix_name = 'form'

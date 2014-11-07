@@ -9,11 +9,22 @@ class AddressForm(forms.Form):
     street = forms.CharField()
     city = forms.CharField()
 
+    def __init__(self, *args, **kwargs):
+        self.custom_attribute = kwargs.pop('custom_kwarg', None)
+        super(AddressForm, self).__init__(*args, **kwargs)
+
 
 class RegistrationForm(SuperForm):
     first_name = forms.CharField()
     last_name = forms.CharField()
     address = FormField(AddressForm)
+    address_custom_kwarg = FormField(AddressForm, kwargs={'custom_kwarg': True})
+    address_initial = FormField(AddressForm, kwargs={
+        'initial': {
+            'street': 'Homebase 42',
+            'city': 'Supertown'
+        }
+    })
 
 
 class FormFieldTests(TestCase):
@@ -39,3 +50,14 @@ class FormFieldTests(TestCase):
         superform = RegistrationForm(prefix='registration')
         boundfield = superform.forms['address']['street']
         self.assertEqual(boundfield.html_name, 'registration-form-address-street')
+
+    def test_form_kwargs(self):
+        superform = RegistrationForm()
+        form = superform.forms['address_custom_kwarg']
+        self.assertEqual(form.custom_attribute, True)
+
+    def test_form_kwargs_initial(self):
+        superform = RegistrationForm()
+        form = superform.forms['address_initial']
+        self.assertEqual(form['street'].value(), 'Homebase 42')
+        self.assertEqual(form['city'].value(), 'Supertown')
