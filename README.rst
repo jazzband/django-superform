@@ -1,5 +1,9 @@
 django-superform
-====================
+================
+
+A ``SuperForm`` is absolutely super if you want to nest a lot of forms in each
+other. Use formsets and nested forms inside the ``SuperForm``. The
+``SuperForm`` will take care of its children!
 
 Imagine you want to have a view that shows and validates a form and a formset.
 Let's say you have a signup form where users can enter multiple email
