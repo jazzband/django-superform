@@ -10,6 +10,7 @@ Fields
 ------------------
 
 .. autoclass:: django_superform.fields.ModelFormField
+    :members: get_instance, shall_save, save
 
 ``ForeignKeyFormField``
 -----------------------

@@ -175,7 +175,51 @@ class FormField(CompositeField):
 
 
 class ModelFormField(FormField):
+    """
+    This class is the to :class:`~django_superform.fields.FormField` what
+    Django's :class:`ModelForm` is to :class:`Form`. It has the same behaviour
+    as :class:`~django_superform.fields.FormField` but will also save the nested
+    form if the super form is saved. Here is an example::
+
+        from django_superform import ModelFormField
+
+        class EmailForm(forms.ModelForm):
+            class Meta:
+                model = EmailAddress
+                fields = ('email',)
+
+        class UserForm(SuperModelForm):
+            email = ModelFormField(EmailForm)
+
+            class Meta:
+                model = User
+                fields = ('username',)
+
+        user_form = UserForm(
+            {'username': 'john', 'form-email-email': 'john@example.com'})
+        if user_form.is_valid():
+            user_form.save()
+
+    This will save the ``user_form`` and create a new instance of ``User`` model
+    and it will also save the ``EmailForm`` and therefore create an instance of
+    ``EmailAddress``!
+
+    However you usually want to use one of the exsting subclasses, like
+    :class:`~django_superform.fields.ForeignKeyFormField` or extend from
+    ``ModelFormField`` class and override the
+    :meth:`~django_superform.fields.ModelFormField.get_instance` method.
+    """
+
     def get_instance(self, form, name):
+        """
+        Provide an instance that shall be used when instantiating the modelform.
+        The ``form`` argument is the super-form instance that this
+        ``ModelFormField`` is used in. ``name`` is the name of this field on the
+        super-form.
+
+        This returns ``None`` by default. So you usually want to override this
+        method in a subclass.
+        """
         return None
 
     def get_kwargs(self, form, name):
@@ -185,11 +229,28 @@ class ModelFormField(FormField):
         return kwargs
 
     def shall_save(self, form, name, composite_form):
+        """
+        Return ``True`` if the given ``composite_form`` (the nested form of this
+        field) shall be saved. Return ``False`` if the form shall not be saved
+        together with the super-form.
+
+        By default it will return ``False`` if the form was not changed and the
+        ``empty_permitted`` argument for the form was set to ``True``. That way
+        you can allow empty forms.
+        """
         if composite_form.empty_permitted and not composite_form.has_changed():
             return False
         return True
 
     def save(self, form, name, composite_form, commit):
+        """
+        This method is called by
+        :meth:`django_superform.forms.SuperModelForm.save` in order to save the
+        modelform that this field takes care of and calls on the nested form's
+        ``save()`` method. But only if
+        :meth:`~django_superform.fields.ModelFormField.shall_save` returns
+        ``True``.
+        """
         if self.shall_save(form, name, composite_form):
             return composite_form.save(commit=commit)
         return None
