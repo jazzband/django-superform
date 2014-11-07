@@ -2,7 +2,7 @@ from django import forms
 from django.forms.forms import ErrorList
 from django.forms.formsets import formset_factory
 from django.test import TestCase
-from django_superform import CompositeForm, FormSetField
+from django_superform import SuperForm, FormSetField
 
 
 class EmailForm(forms.Form):
@@ -12,12 +12,12 @@ class EmailForm(forms.Form):
 EmailFormSet = formset_factory(EmailForm)
 
 
-class AccountForm(CompositeForm):
+class AccountForm(SuperForm):
     username = forms.CharField()
     emails = FormSetField(EmailFormSet)
 
 
-class CompositeFormTests(TestCase):
+class SuperFormTests(TestCase):
     def test_declared_composite_fields(self):
         self.assertEqual(AccountForm.base_fields.keys(), ['username'])
         self.assertTrue(hasattr(AccountForm, 'composite_fields'))
@@ -38,7 +38,7 @@ class CompositeFormTests(TestCase):
         self.assertIsInstance(formset, EmailFormSet)
 
 
-class FormSetsInCompositeFormsTests(TestCase):
+class FormSetsInSuperFormsTests(TestCase):
     def setUp(self):
         self.formset_data = {
             'formset-emails-INITIAL_FORMS': 0,

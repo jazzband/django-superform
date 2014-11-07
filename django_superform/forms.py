@@ -5,8 +5,8 @@ To bring some light in the big number of classes in this file:
 
 First there are:
 
-* ``CompositeForm``
-* ``CompositeModelForm``
+* ``SuperForm``
+* ``SuperModelForm``
 
 They are the forms that you probably want to use in your own code. They are
 direct base classes of ``django.forms.Form`` and ``django.forms.ModelForm``
@@ -15,8 +15,8 @@ to use. Subclass them and be happy.
 
 Then there are:
 
-* ``CompositeFormMixin``
-* ``CompositeModelFormMixin``
+* ``SuperFormMixin``
+* ``SuperModelFormMixin``
 
 These are the mixins you can use if you don't want to subclass from
 ``django.forms.Form`` for whatever reason. The ones with Base at the beginning
@@ -28,11 +28,11 @@ the relevant metaclass in place that handles the search for
 Here is an example on how you can use this module::
 
     from django import forms
-    from django_superform import CompositeModelForm, FormSetField
+    from django_superform import SuperModelForm, FormSetField
     from .forms import CommentFormSet
 
 
-    class PostForm(CompositeModelForm):
+    class PostForm(SuperModelForm):
         title = forms.CharField()
         text = forms.CharField()
         comments = FormSetField(CommentFormSet)
@@ -121,26 +121,26 @@ class DeclerativeCompositeFieldsMetaclass(type):
         return new_class
 
 
-class CompositeFormMixinMetaclass(
+class SuperFormMixinMetaclass(
         DeclerativeCompositeFieldsMetaclass,
         DeclarativeFieldsMetaclass):
     pass
 
 
-class CompositeModelFormMetaclass(
+class SuperModelFormMetaclass(
         DeclerativeCompositeFieldsMetaclass,
         ModelFormMetaclass):
     pass
 
 
-class CompositeFormMixin(object):
+class SuperFormMixin(object):
     '''
     The goal is to provide a mixin that makes handling of formsets and forms on
     forms really easy.
 
     It should allow something like::
 
-        >>> class MyForm(CompositeFormMixin, forms.Form):
+        >>> class MyForm(SuperFormMixin, forms.Form):
         ...     name = forms.CharField()
         ...     links = FormSetField(formset=LinkFormSet)
         ...
@@ -152,7 +152,7 @@ class CompositeFormMixin(object):
     '''
 
     def __init__(self, *args, **kwargs):
-        super(CompositeFormMixin, self).__init__(*args, **kwargs)
+        super(SuperFormMixin, self).__init__(*args, **kwargs)
         self._init_composite_fields()
 
     def __getitem__(self, name):
@@ -163,7 +163,7 @@ class CompositeFormMixin(object):
         if name not in self.fields and name in self.composite_fields:
             field = self.composite_fields[name]
             return CompositeBoundField(self, field, name)
-        return super(CompositeFormMixin, self).__getitem__(name)
+        return super(SuperFormMixin, self).__getitem__(name)
 
     def add_composite_field(self, name, field):
         '''
@@ -207,7 +207,7 @@ class CompositeFormMixin(object):
         errors dict.
         '''
 
-        super(CompositeFormMixin, self).full_clean()
+        super(SuperFormMixin, self).full_clean()
         for key, composite in self.forms.items():
             composite.full_clean()
             if not composite.is_valid():
@@ -218,7 +218,7 @@ class CompositeFormMixin(object):
                 self._errors[key] = ErrorList(composite.errors)
 
 
-class CompositeModelFormMixin(CompositeFormMixin):
+class SuperModelFormMixin(SuperFormMixin):
     def save(self, commit=True):
         '''
         If ``commit=False`` django's modelform implementation will attach a
@@ -227,7 +227,7 @@ class CompositeModelFormMixin(CompositeFormMixin):
         method will be executed as well.
         '''
 
-        saved_obj = super(CompositeModelFormMixin, self).save(commit=commit)
+        saved_obj = super(SuperModelFormMixin, self).save(commit=commit)
         self.save_forms(commit=commit)
         self.save_formsets(commit=commit)
         return saved_obj
@@ -285,9 +285,9 @@ class CompositeModelFormMixin(CompositeFormMixin):
         self._extend_save_m2m('save_formsets_m2m', saved_composites)
 
 
-class CompositeModelForm(CompositeModelFormMixin, forms.ModelForm):
-    __metaclass__ = CompositeModelFormMetaclass
+class SuperModelForm(SuperModelFormMixin, forms.ModelForm):
+    __metaclass__ = SuperModelFormMetaclass
 
 
-class CompositeForm(CompositeFormMixin, forms.Form):
-    __metaclass__ = CompositeFormMixinMetaclass
+class SuperForm(SuperFormMixin, forms.Form):
+    __metaclass__ = SuperFormMixinMetaclass

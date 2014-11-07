@@ -16,7 +16,7 @@ Here we have an example for the usecase. Let's have a look at the
 
 
     from django import forms
-    from django_superform import CompositeModelForm, FormSetField
+    from django_superform import SuperModelForm, FormSetField
     from myapp.models import Account, Email
 
 
@@ -31,7 +31,7 @@ Here we have an example for the usecase. Let's have a look at the
     EmailFormSet = modelformset_factory(EmailForm)
 
 
-    class SignupForm(CompositeModelForm):
+    class SignupForm(SuperModelForm):
         username = forms.CharField()
         emails = FormSetField(EmailFormSet)
 
