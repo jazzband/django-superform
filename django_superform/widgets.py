@@ -3,11 +3,11 @@ from django.template import loader
 
 
 class TemplateWidget(forms.Widget):
-    '''
+    """
     Template based widget. It renders the ``template_name`` set as attribute
     which can be overriden by the ``template_name`` argument to the
     ``__init__`` method.
-    '''
+    """
 
     field = None
     template_name = None

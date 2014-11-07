@@ -4,10 +4,10 @@ from .widgets import FormWidget, FormSetWidget
 
 
 class BaseCompositeField(object):
-    '''
+    """
     The ``BaseCompositeField`` takes care of keeping some kind of compatibility
     with the ``django.forms.Field`` class.
-    '''
+    """
 
     widget = None
     show_hidden_initial = False
@@ -45,9 +45,9 @@ class BaseCompositeField(object):
 
 
 class CompositeField(BaseCompositeField):
-    '''
+    """
     Implements the base structure that is relevant for all composite fields.
-    '''
+    """
 
     prefix_name = 'composite'
 
@@ -59,10 +59,9 @@ class CompositeField(BaseCompositeField):
         self.widget.field = self
 
     def get_prefix(self, form, name):
-        '''
+        """
         Return the prefix that is used for the formset.
-        '''
-
+        """
         return '{form_prefix}{prefix_name}-{field_name}'.format(
             form_prefix=form.prefix + '-' if form.prefix else '',
             prefix_name=self.prefix_name,
@@ -79,12 +78,10 @@ class CompositeField(BaseCompositeField):
             return form.initial.get(name, None)
         return None
 
-
     def get_kwargs(self, form, name):
-        '''
+        """
         Return the keyword arguments that are used to instantiate the formset.
-        '''
-
+        """
         kwargs = {
             'prefix': self.get_prefix(form, name),
             'initial': self.get_initial(form, name),
@@ -157,19 +154,17 @@ class FormField(CompositeField):
         self.default_kwargs = kwargs
 
     def get_form_class(self, form, name):
-        '''
+        """
         Return the form class that will be used for instantiation in
         ``get_form``. You can override this method in subclasses to change
         the behaviour of the given form class.
-        '''
-
+        """
         return self.form_class
 
     def get_form(self, form, name):
-        '''
+        """
         Get an instance of the form.
-        '''
-
+        """
         kwargs = self.get_kwargs(form, name)
         form_class = self.get_form_class(form, name)
         composite_form = form_class(
@@ -221,10 +216,10 @@ class ForeignKeyFormField(ModelFormField):
         return self.field_name or name
 
     def allow_blank(self, form, name):
-        '''
+        """
         Allow blank determines if the form might be completely empty. If it's
         empty it will result in a None as the saved value for the ForeignKey.
-        '''
+        """
         if self.blank is not None:
             return self.blank
         model = form._meta.model
@@ -259,13 +254,13 @@ class ForeignKeyFormField(ModelFormField):
 
 
 class FormSetField(CompositeField):
-    '''
+    """
     First argument is a formset class that is instantiated by this
     FormSetField.
 
     You can pass the ``kwargs`` argument to specify kwargs values that
     are used when the ``formset_class`` is instantiated.
-    '''
+    """
 
     prefix_name = 'formset'
     widget = FormSetWidget
@@ -279,19 +274,17 @@ class FormSetField(CompositeField):
         self.default_kwargs = kwargs
 
     def get_formset_class(self, form, name):
-        '''
+        """
         Return the formset class that will be used for instantiation in
         ``get_formset``. You can override this method in subclasses to change
         the behaviour of the given formset class.
-        '''
-
+        """
         return self.formset_class
 
     def get_formset(self, form, name):
-        '''
+        """
         Get an instance of the formset.
-        '''
-
+        """
         kwargs = self.get_kwargs(form, name)
         formset_class = self.get_formset_class(form, name)
         formset = formset_class(
@@ -312,7 +305,7 @@ class ModelFormSetField(FormSetField):
 
 
 class InlineFormSetField(ModelFormSetField):
-    '''
+    """
     The ``InlineFormSetField`` helps when you want to use a inline formset.
 
     You can pass in either the keyword argument ``formset_class`` which is a
@@ -356,18 +349,18 @@ class InlineFormSetField(ModelFormSetField):
                 parent_model=Gallery,
                 model=Image,
                 extra=1)
-    '''
+    """
 
     def __init__(self, parent_model=None, model=None, formset_class=None,
                  kwargs=None, **factory_kwargs):
-        '''
+        """
         You need to either provide the ``formset_class`` or the ``model``
         argument.
 
         If the ``formset_class`` argument is not given, the ``model`` argument
         is used to create the formset_class on the fly when needed by using the
         ``inlineformset_factory``.
-        '''
+        """
 
         # Make sure that all standard arguments will get passed through to the
         # parent's __init__ method.
@@ -391,12 +384,11 @@ class InlineFormSetField(ModelFormSetField):
         return form._meta.model
 
     def get_formset_class(self, form, name):
-        '''
+        """
         Either return the formset class that was provided as argument to the
         __init__ method, or build one based on the ``parent_model`` and
         ``model`` attributes.
-        '''
-
+        """
         if self.formset_class is not None:
             return self.formset_class
         formset_class = inlineformset_factory(

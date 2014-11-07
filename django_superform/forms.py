@@ -1,4 +1,4 @@
-'''
+"""
 This is awesome. And needs more documentation.
 
 To bring some light in the big number of classes in this file:
@@ -73,7 +73,7 @@ Or in the template::
 
 You're welcome.
 
-'''
+"""
 
 from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
@@ -140,7 +140,7 @@ class SuperModelFormMetaclass(
 
 
 class SuperFormMixin(object):
-    '''
+    """
     The goal is to provide a mixin that makes handling of formsets and forms on
     forms really easy.
 
@@ -155,34 +155,34 @@ class SuperFormMixin(object):
         True
 
     Cleaning, validation, etc should work totally transparent.
-    '''
+    """
 
     def __init__(self, *args, **kwargs):
         super(SuperFormMixin, self).__init__(*args, **kwargs)
         self._init_composite_fields()
 
     def __getitem__(self, name):
-        '''
+        """
         Returns a BoundField for the given field name. It also returns
         CompositeBoundField instances for composite fields.
-        '''
+        """
         if name not in self.fields and name in self.composite_fields:
             field = self.composite_fields[name]
             return CompositeBoundField(self, field, name)
         return super(SuperFormMixin, self).__getitem__(name)
 
     def add_composite_field(self, name, field):
-        '''
+        """
         Add a dynamic composite field to the already existing ones and
         initialize it appropriatly.
-        '''
+        """
         self.composite_fields[name] = field
         self._init_composite_field(name, field)
 
     def get_composite_field_value(self, name):
-        '''
+        """
         Return the form/formset instance for the given field name.
-        '''
+        """
         field = self.composite_fields[name]
         if hasattr(field, 'get_form'):
             return self.forms[name]
@@ -198,21 +198,19 @@ class SuperFormMixin(object):
             self.formsets[name] = formset
 
     def _init_composite_fields(self):
-        '''
+        """
         Setup the forms and formsets.
-        '''
-
+        """
         self.forms = OrderedDict()
         self.formsets = OrderedDict()
         for name, field in self.composite_fields.items():
             self._init_composite_field(name, field)
 
     def full_clean(self):
-        '''
+        """
         Clean the form, including all formsets and add formset errors to the
         errors dict.
-        '''
-
+        """
         super(SuperFormMixin, self).full_clean()
         for key, composite in self.forms.items():
             composite.full_clean()
@@ -226,13 +224,12 @@ class SuperFormMixin(object):
 
 class SuperModelFormMixin(SuperFormMixin):
     def save(self, commit=True):
-        '''
+        """
         If ``commit=False`` django's modelform implementation will attach a
         ``save_m2m`` method to the form instance, so that you can call it
         manually later. When you call ``save_m2m``, the ``save_formsets``
         method will be executed as well.
-        '''
-
+        """
         saved_obj = super(SuperModelFormMixin, self).save(commit=commit)
         self.save_forms(commit=commit)
         self.save_formsets(commit=commit)
@@ -276,12 +273,11 @@ class SuperModelFormMixin(SuperFormMixin):
         self._extend_save_m2m('save_forms_m2m', saved_composites)
 
     def save_formsets(self, commit=True):
-        '''
+        """
         Save all formsets. If ``commit=False``, it will modify the form's
         ``save_m2m()`` so that it also calls the formsets' ``save_m2m()``
         methods.
-        '''
-
+        """
         saved_composites = []
         for name, composite in self.formsets.items():
             field = self.composite_fields[name]
