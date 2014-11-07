@@ -78,10 +78,14 @@ You're welcome.
 from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
 from django.forms.models import ModelFormMetaclass
-from django.utils.datastructures import SortedDict
 from django.utils import six
 from .boundfield import CompositeBoundField
 from .fields import CompositeField
+
+try:
+    from collections import OrderedDict
+except ImportError:
+    from django.utils.datastructures import SortedDict as OrderedDict
 
 
 def get_declared_composite_fields(bases, attrs):
@@ -104,7 +108,7 @@ def get_declared_composite_fields(bases, attrs):
         if hasattr(base, 'composite_fields'):
             composite_fields = list(six.iteritems(base.composite_fields)) + composite_fields
 
-    return SortedDict(composite_fields)
+    return OrderedDict(composite_fields)
 
 
 class DeclerativeCompositeFieldsMetaclass(type):
@@ -196,8 +200,8 @@ class SuperFormMixin(object):
         Setup the forms and formsets.
         '''
 
-        self.forms = SortedDict()
-        self.formsets = SortedDict()
+        self.forms = OrderedDict()
+        self.formsets = OrderedDict()
         for name, field in self.composite_fields.items():
             self._init_composite_field(name, field)
 
