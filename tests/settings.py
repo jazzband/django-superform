@@ -15,6 +15,8 @@ INSTALLED_APPS = [
     'tests',
 ]
 
+MIDDLEWARE_CLASSES = ()
+
 STATIC_URL = '/static/'
 
 SECRET_KEY = '0'
