@@ -1,4 +1,4 @@
-django-compositeform
+django-superform
 ====================
 
 Imagine you want to have a view that shows and validates a form and a formset.
@@ -6,7 +6,7 @@ Let's say you have a signup form where users can enter multiple email
 addresses. Django provides formsets_ for this usecase, but handling those in a
 view is usually quite troublesome. You need to validate both the form and the
 formset manually and you cannot use django's generic FormView_. So here comes
-**django-compositeform** into play.
+**django-superform** into play.
 
 .. _formsets: https://docs.djangoproject.com/en/1.6/topics/forms/formsets/
 .. _FormView: https://docs.djangoproject.com/en/1.6/ref/class-based-views/generic-editing/#formview
@@ -16,7 +16,7 @@ Here we have an example for the usecase. Let's have a look at the
 
 
     from django import forms
-    from django_compositeform import CompositeModelForm, FormSetField
+    from django_superform import CompositeModelForm, FormSetField
     from myapp.models import Account, Email
 
 

@@ -2,7 +2,7 @@ from django import forms
 from django.forms.forms import ErrorList
 from django.forms.formsets import formset_factory
 from django.test import TestCase
-from django_compositeform import CompositeForm, FormSetField
+from django_superform import CompositeForm, FormSetField
 
 
 class EmailForm(forms.Form):

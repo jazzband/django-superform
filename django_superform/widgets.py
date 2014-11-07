@@ -65,10 +65,10 @@ class TemplateWidget(forms.Widget):
 
 
 class FormWidget(TemplateWidget):
-    template_name = 'compositeform/formfield.html'
+    template_name = 'superform/formfield.html'
     value_context_name = 'form'
 
 
 class FormSetWidget(TemplateWidget):
-    template_name = 'compositeform/formsetfield.html'
+    template_name = 'superform/formsetfield.html'
     value_context_name = 'formset'

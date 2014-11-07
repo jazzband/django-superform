@@ -21,7 +21,7 @@ def runtests(*argv):
         from coverage import coverage
         test_coverage = coverage(
             branch=True,
-            source=['django_compositeform'])
+            source=['django_superform'])
         test_coverage.start()
 
     # Run tests.

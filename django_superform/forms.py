@@ -28,7 +28,7 @@ the relevant metaclass in place that handles the search for
 Here is an example on how you can use this module::
 
     from django import forms
-    from django_compositeform import CompositeModelForm, FormSetField
+    from django_superform import CompositeModelForm, FormSetField
     from .forms import CommentFormSet
 
 
