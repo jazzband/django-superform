@@ -19,9 +19,9 @@ class AccountForm(SuperForm):
 
 class SuperFormTests(TestCase):
     def test_declared_composite_fields(self):
-        self.assertEqual(AccountForm.base_fields.keys(), ['username'])
+        self.assertEqual(list(AccountForm.base_fields.keys()), ['username'])
         self.assertTrue(hasattr(AccountForm, 'composite_fields'))
-        self.assertEqual(AccountForm.composite_fields.keys(), ['emails'])
+        self.assertEqual(list(AccountForm.composite_fields.keys()), ['emails'])
         field = AccountForm.composite_fields['emails']
         self.assertIsInstance(field, FormSetField)
 
