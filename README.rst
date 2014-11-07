@@ -1,6 +1,8 @@
 django-superform
 ================
 
+|docs|
+
 A ``SuperForm`` is absolutely super if you want to nest a lot of forms in each
 other. Use formsets and nested forms inside the ``SuperForm``. The
 ``SuperForm`` will take care of its children!
@@ -88,10 +90,15 @@ And it just works.
 Documentation
 -------------
 
-Full documentation will follow.
+Full documentation is available on Read The Docs: https://django-superform.readthedocs.org/
 
 ----
 
 Developed by Gregor Müllegger in cooperation with Team23_.
 
 .. _Team23: http://www.team23.de/
+
+.. |docs| image:: https://readthedocs.org/projects/django-superform/badge/?version=latest
+    :alt: Documentation Status
+    :scale: 100%
+    :target: https://django-superform.readthedocs.org/
