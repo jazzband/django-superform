@@ -7,7 +7,10 @@ from .models import Series, Post, Image
 
 class UseFirstModelFormField(ModelFormField):
     def get_instance(self, form, name):
-        return self.form_class._meta.model._default_manager.first()
+        try:
+            return self.form_class._meta.model._default_manager.all()[0]
+        except IndexError:
+            return None
 
 
 class SeriesForm(forms.ModelForm):
