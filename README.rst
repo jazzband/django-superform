@@ -1,7 +1,7 @@
 django-superform
 ================
 
-|docs|
+|build| |docs| |package| |gitter|
 
 A ``SuperForm`` is absolutely super if you want to nest a lot of forms in each
 other. Use formsets and nested forms inside the ``SuperForm``. The
@@ -99,7 +99,19 @@ Developed by Gregor Müllegger in cooperation with Team23_.
 
 .. _Team23: http://www.team23.de/
 
+.. |build| image:: https://travis-ci.org/gregmuellegger/django-superform.svg?branch=master
+    :alt: Build Status
+    :scale: 100%
+    :target: https://travis-ci.org/gregmuellegger/django-superform
 .. |docs| image:: https://readthedocs.org/projects/django-superform/badge/?version=latest
     :alt: Documentation Status
     :scale: 100%
     :target: https://django-superform.readthedocs.org/
+.. |package| image:: https://badge.fury.io/py/django-superform.svg
+    :alt: Package Version
+    :scale: 100%
+    :target: http://badge.fury.io/py/django-superform
+.. |gitter| image:: https://badges.gitter.im/JoinChat.svg
+    :alt: Gitter Chat, discuss django-superform with others
+    :scale: 100%
+    :target: https://gitter.im/gregmuellegger/django-superform
