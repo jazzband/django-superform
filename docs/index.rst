@@ -12,5 +12,6 @@ handling multiple forms on one page gets *super* easy.
     quickstart
     forms
     fields
+    changelog
 
 :ref:`genindex` | :ref:`modindex` | :ref:`search`
