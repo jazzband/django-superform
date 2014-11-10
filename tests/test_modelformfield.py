@@ -24,6 +24,14 @@ class PostForm(SuperModelForm):
         fields = ('title',)
 
 
+class UnrequiredSeriesPostForm(SuperModelForm):
+    series = ModelFormField(SeriesForm, required=False)
+
+    class Meta:
+        model = Post
+        fields = ('title',)
+
+
 class UseExistingSeriesPostForm(SuperModelForm):
     existing_series = UseFirstModelFormField(SeriesForm)
 
@@ -89,3 +97,35 @@ class FormFieldTests(TestCase):
         changed_series = Series.objects.get()
         self.assertEqual(changed_series.pk, existing_series.pk)
         self.assertEqual(changed_series.title, 'Changed name')
+
+    def test_required(self):
+        form = PostForm({
+            'title': 'New blog post',
+            'form-series-title': '',
+        })
+        form.full_clean()
+
+        self.assertFalse(form.is_valid())
+        self.assertTrue('required' in str(form.errors['series']['title']))
+
+        # Test when key is not in data.
+        form = PostForm({
+            'title': 'New blog post',
+        })
+        form.full_clean()
+
+        self.assertFalse(form.is_valid())
+        self.assertTrue('required' in str(form.errors['series']['title']))
+
+    def test_not_required(self):
+        form = UnrequiredSeriesPostForm({
+            'title': 'New blog post',
+            'form-series-title': '',
+        })
+        form.full_clean()
+
+        self.assertTrue(form.is_valid())
+
+        form.save()
+        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Series.objects.count(), 0)

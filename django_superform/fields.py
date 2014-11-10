@@ -226,6 +226,7 @@ class ModelFormField(FormField):
         kwargs = super(ModelFormField, self).get_kwargs(form, name)
         instance = self.get_instance(form, name)
         kwargs.setdefault('instance', instance)
+        kwargs.setdefault('empty_permitted', not self.required)
         return kwargs
 
     def shall_save(self, form, name, composite_form):
