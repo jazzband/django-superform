@@ -116,9 +116,9 @@ class FormField(CompositeField):
         {{ registration_form.address.city.errors }}
 
     The fields will all have a prefix in their name so that the naming does not
-    clash with other fields on the page. The name attribute of the input tag for
-    the ``street`` field in this example will be: ``form-address-street``. The
-    name will change if you set a prefix on the superform::
+    clash with other fields on the page. The name attribute of the input tag
+    for the ``street`` field in this example will be: ``form-address-street``.
+    The name will change if you set a prefix on the superform::
 
         form = RegistrationForm(prefix='registration')
 
@@ -179,8 +179,8 @@ class ModelFormField(FormField):
     """
     This class is the to :class:`~django_superform.fields.FormField` what
     Django's :class:`ModelForm` is to :class:`Form`. It has the same behaviour
-    as :class:`~django_superform.fields.FormField` but will also save the nested
-    form if the super form is saved. Here is an example::
+    as :class:`~django_superform.fields.FormField` but will also save the
+    nested form if the super form is saved. Here is an example::
 
         from django_superform import ModelFormField
 
@@ -201,9 +201,9 @@ class ModelFormField(FormField):
         if user_form.is_valid():
             user_form.save()
 
-    This will save the ``user_form`` and create a new instance of ``User`` model
-    and it will also save the ``EmailForm`` and therefore create an instance of
-    ``EmailAddress``!
+    This will save the ``user_form`` and create a new instance of ``User``
+    model and it will also save the ``EmailForm`` and therefore create an
+    instance of ``EmailAddress``!
 
     However you usually want to use one of the exsting subclasses, like
     :class:`~django_superform.fields.ForeignKeyFormField` or extend from
@@ -214,16 +214,16 @@ class ModelFormField(FormField):
         Usually the :class:`~django_superform.fields.ModelFormField` is used
         inside a :class:`~django_superform.forms.SuperModelForm`. You actually
         can use it within a :class:`~django_superform.forms.SuperForm`, but
-        since this form type does not have a ``save()`` method, you will need to
-        take care of saving the nested model form yourself.
+        since this form type does not have a ``save()`` method, you will need
+        to take care of saving the nested model form yourself.
     """
 
     def get_instance(self, form, name):
         """
-        Provide an instance that shall be used when instantiating the modelform.
-        The ``form`` argument is the super-form instance that this
-        ``ModelFormField`` is used in. ``name`` is the name of this field on the
-        super-form.
+        Provide an instance that shall be used when instantiating the
+        modelform. The ``form`` argument is the super-form instance that this
+        ``ModelFormField`` is used in. ``name`` is the name of this field on
+        the super-form.
 
         This returns ``None`` by default. So you usually want to override this
         method in a subclass.
@@ -236,8 +236,8 @@ class ModelFormField(FormField):
 
         The ``instance`` kwarg will be set to the value returned by
         :meth:`~django_superform.fields.ModelFormField.get_instance`. The
-        ``empty_permitted`` kwarg will be set to the inverse of the ``required``
-        argument passed into the constructor of this field.
+        ``empty_permitted`` kwarg will be set to the inverse of the
+        ``required`` argument passed into the constructor of this field.
         """
         kwargs = super(ModelFormField, self).get_kwargs(form, name)
         instance = self.get_instance(form, name)
@@ -247,9 +247,9 @@ class ModelFormField(FormField):
 
     def shall_save(self, form, name, composite_form):
         """
-        Return ``True`` if the given ``composite_form`` (the nested form of this
-        field) shall be saved. Return ``False`` if the form shall not be saved
-        together with the super-form.
+        Return ``True`` if the given ``composite_form`` (the nested form of
+        this field) shall be saved. Return ``False`` if the form shall not be
+        saved together with the super-form.
 
         By default it will return ``False`` if the form was not changed and the
         ``empty_permitted`` argument for the form was set to ``True``. That way
