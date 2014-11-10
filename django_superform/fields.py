@@ -47,6 +47,7 @@ class BaseCompositeField(object):
 class CompositeField(BaseCompositeField):
     """
     Implements the base structure that is relevant for all composite fields.
+    This field cannot be used directly, use a subclass of it.
     """
 
     prefix_name = 'composite'
@@ -208,6 +209,13 @@ class ModelFormField(FormField):
     :class:`~django_superform.fields.ForeignKeyFormField` or extend from
     ``ModelFormField`` class and override the
     :meth:`~django_superform.fields.ModelFormField.get_instance` method.
+
+    .. note::
+        Usually the :class:`~django_superform.fields.ModelFormField` is used
+        inside a :class:`~django_superform.forms.SuperModelForm`. You actually
+        can use it within a :class:`~django_superform.forms.SuperForm`, but
+        since this form type does not have a ``save()`` method, you will need to
+        take care of saving the nested model form yourself.
     """
 
     def get_instance(self, form, name):
@@ -223,6 +231,14 @@ class ModelFormField(FormField):
         return None
 
     def get_kwargs(self, form, name):
+        """
+        Return the keyword arguments that are used to instantiate the formset.
+
+        The ``instance`` kwarg will be set to the value returned by
+        :meth:`~django_superform.fields.ModelFormField.get_instance`. The
+        ``empty_permitted`` kwarg will be set to the inverse of the ``required``
+        argument passed into the constructor of this field.
+        """
         kwargs = super(ModelFormField, self).get_kwargs(form, name)
         instance = self.get_instance(form, name)
         kwargs.setdefault('instance', instance)
