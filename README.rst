@@ -23,16 +23,14 @@ Here we have an example for the usecase. Let's have a look at the
 .. code-block:: python
 
     from django import forms
-    from django_superform import SuperModelForm, FormSetField
+    from django_superform import SuperModelForm, InlineFormSetField
     from myapp.models import Account, Email
 
 
     class EmailForm(forms.ModelForm):
-        email = forms.EmailField()
-
         class Meta:
             model = Email
-            fields = ('email',)
+            fields = ('account', 'email',)
 
 
     EmailFormSet = modelformset_factory(EmailForm)
@@ -40,7 +38,8 @@ Here we have an example for the usecase. Let's have a look at the
 
     class SignupForm(SuperModelForm):
         username = forms.CharField()
-        emails = FormSetField(EmailFormSet)
+        # The model `Email` has a ForeignKey called `user` to `Account`.
+        emails = InlineFormSetField(formset_class=EmailFormSet)
 
         class Meta:
             model = Account
