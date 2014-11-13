@@ -1,6 +1,8 @@
 django-superform
 ================
 
+**Less sucking formsets.**
+
 |build| |docs| |package| |gitter|
 
 A ``SuperForm`` is absolutely super if you want to nest a lot of forms in each
