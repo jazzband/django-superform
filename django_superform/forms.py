@@ -127,7 +127,7 @@ class DeclerativeCompositeFieldsMetaclass(type):
         return new_class
 
 
-class SuperFormMixinMetaclass(
+class SuperFormMetaclass(
         DeclerativeCompositeFieldsMetaclass,
         DeclarativeFieldsMetaclass):
     """
@@ -289,6 +289,6 @@ class SuperModelForm(six.with_metaclass(SuperModelFormMetaclass,
     pass
 
 
-class SuperForm(six.with_metaclass(SuperFormMixinMetaclass,
+class SuperForm(six.with_metaclass(SuperFormMetaclass,
                                    SuperFormMixin, forms.Form)):
     pass
