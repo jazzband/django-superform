@@ -90,8 +90,8 @@ except ImportError:
 
 def get_declared_composite_fields(bases, attrs):
     """
-    Create a list of formset field instances from the passed in 'attrs', plus
-    any similar fields on the base classes (in 'bases').
+    Create a list of CompositeField instances from the passed in `attrs`, plus
+    any other composite fields of the base classes (in `bases`).
     """
     composite_fields = [
         (field_name, attrs.pop(field_name))
@@ -115,9 +115,9 @@ def get_declared_composite_fields(bases, attrs):
 
 class DeclerativeCompositeFieldsMetaclass(type):
     """
-    Metaclass that converts FormSetField attributes to a dictionary called
-    'composite_fields', taking into account parent class 'composite_fields' as
-    well.
+    Metaclass that converts FormField and FormSetField attributes to a
+    dictionary called `composite_fields`. It will also include all composite
+    fields from parent classes.
     """
 
     def __new__(cls, name, bases, attrs):
@@ -130,31 +130,27 @@ class DeclerativeCompositeFieldsMetaclass(type):
 class SuperFormMixinMetaclass(
         DeclerativeCompositeFieldsMetaclass,
         DeclarativeFieldsMetaclass):
-    pass
+    """
+    Metaclass for :class:`~django_superform.forms.SuperForm`.
+    """
 
 
 class SuperModelFormMetaclass(
         DeclerativeCompositeFieldsMetaclass,
         ModelFormMetaclass):
-    pass
+    """
+    Metaclass for :class:`~django_superform.forms.SuperModelForm`.
+    """
 
 
 class SuperFormMixin(object):
     """
-    The goal is to provide a mixin that makes handling of formsets and forms on
-    forms really easy.
+    The base class for all super forms. It behaves just like a normal django
+    form but will also take composite fields, like
+    :class:`~django_superform.fields.FormField` and
+    :class:`~django_superform.fields.FormSetField`.
 
-    It should allow something like::
-
-        >>> class MyForm(SuperFormMixin, forms.Form):
-        ...     name = forms.CharField()
-        ...     links = FormSetField(formset=LinkFormSet)
-        ...
-        >>> myform = MyForm()
-        >>> isinstance(myform['links'], LinkFormSet)
-        True
-
-    Cleaning, validation, etc should work totally transparent.
+    Cleaning, validation, etc. should work totally transparent.
     """
 
     def __init__(self, *args, **kwargs):
@@ -248,8 +244,8 @@ class SuperModelFormMixin(SuperFormMixin):
             for save_m2m in additional_save_m2m:
                 save_m2m()
 
-        # The save() method was called before save_formsets(), so we will
-        # already have save_m2m() available.
+        # The save() method was called before save_forms()/save_formsets(), so
+        # we will already have save_m2m() available.
         if hasattr(self, 'save_m2m'):
             _original_save_m2m = self.save_m2m
         else:
