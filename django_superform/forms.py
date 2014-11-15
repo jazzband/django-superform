@@ -208,14 +208,14 @@ class SuperFormMixin(object):
         errors dict.
         """
         super(SuperFormMixin, self).full_clean()
-        for key, composite in self.forms.items():
+        for field_name, composite in self.forms.items():
             composite.full_clean()
             if not composite.is_valid():
-                self._errors[key] = ErrorDict(composite.errors)
-        for key, composite in self.formsets.items():
+                self._errors[field_name] = ErrorDict(composite.errors)
+        for field_name, composite in self.formsets.items():
             composite.full_clean()
             if not composite.is_valid():
-                self._errors[key] = ErrorList(composite.errors)
+                self._errors[field_name] = ErrorList(composite.errors)
 
 
 class SuperModelFormMixin(SuperFormMixin):
