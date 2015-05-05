@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.2.0 (not released yet)
-------------------------
+0.2.0
+-----
 
 * Django 1.8 support.
 * Initial values given to the ``__init__`` method of the super-form will get
