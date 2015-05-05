@@ -4,6 +4,7 @@ Changelog
 0.2.0 (not released yet)
 ------------------------
 
+* Django 1.8 support.
 * Initial values given to the ``__init__`` method of the super-form will get
   passed through to the nested forms.
 * The ``empty_permitted`` argument for modelforms used in a ``ModelFormField``
