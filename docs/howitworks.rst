@@ -4,6 +4,7 @@ Form class needs to subclass from :class:`~django_superform.forms.SuperForm`
 or :class:`~django_superform.forms.SuperModelForm`.
 
 During instantiation:
+
 * composite fields get initialized
 * The fields ``get_form`` and ``get_formsets`` methods are called which
   instantiate the nested form/formset. They get the same data/files that are

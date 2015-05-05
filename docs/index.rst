@@ -12,6 +12,7 @@ handling multiple forms on one page gets *super* easy.
     quickstart
     forms
     fields
+    howitworks
     changelog
 
 :ref:`genindex` | :ref:`modindex` | :ref:`search`
