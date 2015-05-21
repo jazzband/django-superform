@@ -207,16 +207,19 @@ class SuperFormMixin(object):
         Clean the form, including all formsets and add formset errors to the
         errors dict.
         """
+
+        # Note: is_valid() is False but errors are empty when form has no
+        # postdata yet.
         super(SuperFormMixin, self).full_clean()
         for field_name, composite in self.forms.items():
             composite.full_clean()
             errors = composite.errors
-            if errors:
+            if not composite.is_valid() and errors:
                 self._errors[field_name] = ErrorDict(errors)
         for field_name, composite in self.formsets.items():
             composite.full_clean()
             errors = composite.errors
-            if errors:
+            if not composite.is_valid() and errors:
                 self._errors[field_name] = ErrorList(errors)
 
 
