@@ -65,3 +65,10 @@ class FormSetsInSuperFormsTests(TestCase):
         self.assertTrue(form.errors['username'])
         self.assertTrue(form.errors['emails'])
         self.assertIsInstance(form.errors['emails'], ErrorList)
+
+    def test_empty_form_has_no_errors(self):
+        """Empty forms have no errors."""
+        form = AccountForm()
+
+        self.assertFalse(form.is_valid())
+        self.assertFalse(form.errors)

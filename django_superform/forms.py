@@ -210,12 +210,14 @@ class SuperFormMixin(object):
         super(SuperFormMixin, self).full_clean()
         for field_name, composite in self.forms.items():
             composite.full_clean()
-            if not composite.is_valid():
-                self._errors[field_name] = ErrorDict(composite.errors)
+            errors = composite.errors
+            if errors:
+                self._errors[field_name] = ErrorDict(errors)
         for field_name, composite in self.formsets.items():
             composite.full_clean()
-            if not composite.is_valid():
-                self._errors[field_name] = ErrorList(composite.errors)
+            errors = composite.errors
+            if errors:
+                self._errors[field_name] = ErrorList(errors)
 
     @property
     def media(self):
