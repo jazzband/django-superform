@@ -76,7 +76,7 @@ You're welcome.
 """
 
 from django import forms
-from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
+from django.forms.forms import DeclarativeFieldsMetaclass
 from django.forms.models import ModelFormMetaclass
 from django.utils import six
 from .boundfield import CompositeBoundField
@@ -220,6 +220,15 @@ class SuperFormMixin(object):
             errors = composite.errors
             if not composite.is_valid() and errors:
                 self._errors[field_name] = errors
+
+    @property
+    def media(self):
+        """Propagate composite field media up with everything else."""
+        media = super(SuperFormMixin, self).media
+        for composite_name in self.composite_fields.keys():
+            form = self.get_composite_field_value(composite_name)
+            media += form.media
+        return media
 
 
 class SuperModelFormMixin(SuperFormMixin):
