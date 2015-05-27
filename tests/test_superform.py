@@ -1,5 +1,5 @@
 from django import forms
-from django.forms.forms import ErrorList
+from django.forms.forms import ErrorDict, ErrorList
 from django.forms.formsets import formset_factory
 from django.test import TestCase
 from django_superform import SuperForm, FormSetField
@@ -64,7 +64,7 @@ class FormSetsInSuperFormsTests(TestCase):
         self.assertEqual(form.is_valid(), False)
         self.assertTrue(form.errors['username'])
         self.assertTrue(form.errors['emails'])
-        self.assertIsInstance(form.errors['emails'], ErrorList)
+        self.assertIsInstance(form.errors['emails'], list)
 
     def test_empty_form_has_no_errors(self):
         """Empty forms have no errors."""
@@ -72,3 +72,20 @@ class FormSetsInSuperFormsTests(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertFalse(form.errors)
+
+    def test_formset_errors(self):
+        """Formset errors get propagated properly."""
+        data = {
+            'formset-emails-INITIAL_FORMS': 0,
+            'formset-emails-TOTAL_FORMS': 1,
+            'formset-emails-MAX_NUM_FORMS': 3,
+            'formset-emails-0-email': 'foobar',
+            'username': 'TestUser',
+        }
+        form = AccountForm(data)
+
+        expected_errors = [ErrorDict(
+            {u'email': ErrorList([u'Enter a valid email address.'])})]
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['emails'], expected_errors)

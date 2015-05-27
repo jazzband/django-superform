@@ -208,19 +208,18 @@ class SuperFormMixin(object):
         errors dict.
         """
 
-        # Note: is_valid() is False but errors are empty when form has no
-        # postdata yet.
+        # is_valid() is False and errors are empty when form has no postdata
         super(SuperFormMixin, self).full_clean()
         for field_name, composite in self.forms.items():
             composite.full_clean()
             errors = composite.errors
             if not composite.is_valid() and errors:
-                self._errors[field_name] = ErrorDict(errors)
+                self._errors[field_name] = errors
         for field_name, composite in self.formsets.items():
             composite.full_clean()
             errors = composite.errors
             if not composite.is_valid() and errors:
-                self._errors[field_name] = ErrorList(errors)
+                self._errors[field_name] = errors
 
     @property
     def media(self):
