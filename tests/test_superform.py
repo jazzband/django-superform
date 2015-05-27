@@ -117,7 +117,6 @@ class FormSetsInSuperFormsTests(TestCase):
 
         expected_js = UsernameInput.Media.js
         expected_css = EmailInput.Media.css
-        expected_css['all'] = list(expected_css['all'])
 
         self.assertEqual(form.media._css, expected_css)
         self.assertEqual(form.media._js, expected_js)
