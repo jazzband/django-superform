@@ -75,6 +75,7 @@ You're welcome.
 
 """
 
+from functools import reduce
 from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
 from django.forms.models import ModelFormMetaclass
