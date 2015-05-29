@@ -5,15 +5,31 @@ from django.test import TestCase
 from django_superform import SuperForm, FormSetField
 
 
+class EmailInput(forms.TextInput):
+    """A test widget with media directives."""
+
+    class Media(object):
+        css = {
+            'all': ['http://example.com/email_widget_style.css'],
+        }
+
+
+class UsernameInput(forms.TextInput):
+    """Another test widget with media directives."""
+
+    class Media(object):
+        js = ['http://example.com/check_username_available.js']
+
+
 class EmailForm(forms.Form):
-    email = forms.EmailField()
+    email = forms.EmailField(widget=EmailInput)
 
 
 EmailFormSet = formset_factory(EmailForm)
 
 
 class AccountForm(SuperForm):
-    username = forms.CharField()
+    username = forms.CharField(widget=UsernameInput)
     emails = FormSetField(EmailFormSet)
 
 
@@ -65,3 +81,14 @@ class FormSetsInSuperFormsTests(TestCase):
         self.assertTrue(form.errors['username'])
         self.assertTrue(form.errors['emails'])
         self.assertIsInstance(form.errors['emails'], ErrorList)
+
+    def test_aggregate_media(self):
+        """Media gets aggregated, including from composites."""
+        form = AccountForm()
+
+        expected_js = UsernameInput.Media.js
+        expected_css = EmailInput.Media.css
+        expected_css['all'] = list(expected_css['all'])
+
+        self.assertEqual(form.media._css, expected_css)
+        self.assertEqual(form.media._js, expected_js)

@@ -217,6 +217,18 @@ class SuperFormMixin(object):
             if not composite.is_valid():
                 self._errors[field_name] = ErrorList(composite.errors)
 
+    @property
+    def media(self):
+        """
+        Incooperate composite field's media.
+        """
+        media_list = []
+        media_list.append(super(SuperFormMixin, self).media)
+        for composite_name in self.composite_fields.keys():
+            form = self.get_composite_field_value(composite_name)
+            media_list.append(form.media)
+        return reduce(lambda a, b: a + b, media_list)
+
 
 class SuperModelFormMixin(SuperFormMixin):
     def save(self, commit=True):
