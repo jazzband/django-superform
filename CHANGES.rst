@@ -5,6 +5,8 @@ Changelog
 ----------------------
 
 * Support for Django's Media handling in nested forms. See `#3`_ and `#5`_.
+* Do not populate errorlist representations without any errors of nested
+  formsets into the errors of the super form. See `#5`_ for details.
 
 .. _#3: https://github.com/gregmuellegger/django-superform/issues/3
 .. _#5: https://github.com/gregmuellegger/django-superform/pull/5
