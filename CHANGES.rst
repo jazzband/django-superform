@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.3.0 (in development)
+----------------------
+
+* Support for Django's Media handling in nested forms. See `#3`_ and `#5`_.
+
+.. _#3: https://github.com/gregmuellegger/django-superform/issues/3
+.. _#5: https://github.com/gregmuellegger/django-superform/pull/5
+
 0.2.0
 -----
 
