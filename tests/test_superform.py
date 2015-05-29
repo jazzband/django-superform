@@ -1,19 +1,35 @@
 from django import forms
-from django.forms.forms import ErrorList
+from django.forms.forms import ErrorDict, ErrorList
 from django.forms.formsets import formset_factory
 from django.test import TestCase
 from django_superform import SuperForm, FormSetField
 
 
+class EmailInput(forms.TextInput):
+    """A test widget with media directives."""
+
+    class Media(object):
+        css = {
+            'all': ['http://example.com/email_widget_style.css'],
+        }
+
+
+class UsernameInput(forms.TextInput):
+    """Another test widget with media directives."""
+
+    class Media(object):
+        js = ['http://example.com/check_username_available.js']
+
+
 class EmailForm(forms.Form):
-    email = forms.EmailField()
+    email = forms.EmailField(widget=EmailInput)
 
 
 EmailFormSet = formset_factory(EmailForm)
 
 
 class AccountForm(SuperForm):
-    username = forms.CharField()
+    username = forms.CharField(widget=UsernameInput)
     emails = FormSetField(EmailFormSet)
 
 
@@ -64,4 +80,43 @@ class FormSetsInSuperFormsTests(TestCase):
         self.assertEqual(form.is_valid(), False)
         self.assertTrue(form.errors['username'])
         self.assertTrue(form.errors['emails'])
-        self.assertIsInstance(form.errors['emails'], ErrorList)
+        self.assertIsInstance(form.errors['emails'], list)
+
+    def test_empty_form_has_no_errors(self):
+        """Empty forms have no errors."""
+        form = AccountForm()
+
+        self.assertFalse(form.is_valid())
+        self.assertFalse(form.errors)
+
+    def test_formset_errors(self):
+        """Formset errors get propagated properly."""
+        data = {
+            'formset-emails-INITIAL_FORMS': 0,
+            'formset-emails-TOTAL_FORMS': 1,
+            'formset-emails-MAX_NUM_FORMS': 3,
+            'formset-emails-0-email': 'foobar',
+            'username': 'TestUser',
+        }
+        form = AccountForm(data)
+
+        expected_errors = [ErrorDict(
+            {u'email': ErrorList([u'Enter a valid email address.'])})]
+
+        # Django 1.4 has "e-mail" instead of "email"
+        expected_14_errors = [ErrorDict(
+            {u'email': ErrorList([u'Enter a valid e-mail address.'])})]
+
+        self.assertFalse(form.is_valid())
+        if form.errors['emails'] != expected_14_errors:
+            self.assertEqual(form.errors['emails'], expected_errors)
+
+    def test_aggregate_media(self):
+        """Media gets aggregated, including from composites."""
+        form = AccountForm()
+
+        expected_js = UsernameInput.Media.js
+        expected_css = EmailInput.Media.css
+
+        self.assertEqual(form.media._css, expected_css)
+        self.assertEqual(form.media._js, expected_js)

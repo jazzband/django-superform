@@ -76,7 +76,7 @@ You're welcome.
 """
 
 from django import forms
-from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
+from django.forms.forms import DeclarativeFieldsMetaclass
 from django.forms.models import ModelFormMetaclass
 from django.utils import six
 from .boundfield import CompositeBoundField
@@ -207,15 +207,28 @@ class SuperFormMixin(object):
         Clean the form, including all formsets and add formset errors to the
         errors dict.
         """
+
+        # is_valid() is False and errors are empty when form has no postdata
         super(SuperFormMixin, self).full_clean()
         for field_name, composite in self.forms.items():
             composite.full_clean()
-            if not composite.is_valid():
-                self._errors[field_name] = ErrorDict(composite.errors)
+            errors = composite.errors
+            if not composite.is_valid() and errors:
+                self._errors[field_name] = errors
         for field_name, composite in self.formsets.items():
             composite.full_clean()
-            if not composite.is_valid():
-                self._errors[field_name] = ErrorList(composite.errors)
+            errors = composite.errors
+            if not composite.is_valid() and errors:
+                self._errors[field_name] = errors
+
+    @property
+    def media(self):
+        """Propagate composite field media up with everything else."""
+        media = super(SuperFormMixin, self).media
+        for composite_name in self.composite_fields.keys():
+            form = self.get_composite_field_value(composite_name)
+            media += form.media
+        return media
 
     @property
     def media(self):

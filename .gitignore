@@ -1,3 +1,5 @@
+*.pyc
 /docs/_build/
 /.tox/
 /dist/
+/django_superform.egg-info/
