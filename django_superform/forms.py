@@ -205,21 +205,18 @@ class SuperFormMixin(object):
     def full_clean(self):
         """
         Clean the form, including all formsets and add formset errors to the
-        errors dict.
+        errors dict. Errors of nested forms and formsets are only included if
+        they actually contain errors.
         """
-
-        # is_valid() is False and errors are empty when form has no postdata
         super(SuperFormMixin, self).full_clean()
         for field_name, composite in self.forms.items():
             composite.full_clean()
-            errors = composite.errors
-            if not composite.is_valid() and errors:
-                self._errors[field_name] = errors
+            if not composite.is_valid() and composite._errors:
+                self._errors[field_name] = ErrorDict(composite._errors)
         for field_name, composite in self.formsets.items():
             composite.full_clean()
-            errors = composite.errors
-            if not composite.is_valid() and errors:
-                self._errors[field_name] = errors
+            if not composite.is_valid() and composite._errors:
+                self._errors[field_name] = ErrorList(composite._errors)
 
     @property
     def media(self):
