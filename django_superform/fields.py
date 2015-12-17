@@ -454,11 +454,13 @@ class InlineFormSetField(ModelFormSetField):
                                                  **field_kwargs)
         if (
                 self.formset_class is None and
+                'form' not in self.formset_factory_kwargs and
                 'fields' not in self.formset_factory_kwargs and
                 'exclude' not in self.formset_factory_kwargs):
             raise ValueError(
                 'You need to either specify the `formset_class` argument or '
-                'the `fields`/`exclude` arguments when creating a {0}.'
+                'one of `form`/`fields`/`exclude` arguments '
+                'when creating a {0}.'
                 .format(self.__class__.__name__))
 
     def get_model(self, form, name):
