@@ -34,7 +34,7 @@ class CompositeBoundField(BoundField):
         composite_item = self.form.get_composite_field_value(self.name)
         return composite_item[item]
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Never evaluate the bound field as False. This is necessary since
         otherwise python will fallback to the __len__ implementation of the
@@ -42,6 +42,9 @@ class CompositeBoundField(BoundField):
         it might contain zero forms in the given formset.
         """
         return True
+
+    # Python 2's __bool__ is called __nonzero__.
+    __nonzero__ = __bool__
 
     @property
     def errors(self):
