@@ -18,7 +18,7 @@ from .forms import SuperForm, SuperModelForm
 from .widgets import FormWidget, FormSetWidget
 
 
-__version__ = '0.3.0.dev1'
+__version__ = '0.3.0'
 
 
 __all__ = (

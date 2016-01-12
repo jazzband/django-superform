@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.3.0 (in development)
-----------------------
+0.3.0
+-----
 
 * `#11`_: Fix ``CompositeBoundField`` to allow direct access to nested form
   fields via ``form['nested_form']['field']``.
