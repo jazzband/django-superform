@@ -1,24 +1,33 @@
 language: python
 python: 2.7
 env:
-  - TOXENV=py26-14
-  - TOXENV=py26-16
-  - TOXENV=py27-14
-  - TOXENV=py27-16
-  - TOXENV=py27-17
-  - TOXENV=py27-18
-  - TOXENV=py33-16
-  - TOXENV=py33-17
-  - TOXENV=py34-16
-  - TOXENV=py34-17
-  - TOXENV=py35-18
-  - TOXENV=pypy-14
-  - TOXENV=pypy-16
-  - TOXENV=pypy-17
-  - TOXENV=pypy-18
-  - TOXENV=docs
-  - TOXENV=flake8
+- TOXENV=py26-14
+- TOXENV=py26-16
+- TOXENV=py27-14
+- TOXENV=py27-16
+- TOXENV=py27-17
+- TOXENV=py27-18
+- TOXENV=py33-16
+- TOXENV=py33-17
+- TOXENV=py34-16
+- TOXENV=py34-17
+- TOXENV=py35-18
+- TOXENV=pypy-14
+- TOXENV=pypy-16
+- TOXENV=pypy-17
+- TOXENV=pypy-18
+- TOXENV=docs
+- TOXENV=flake8
 install:
-  - pip install tox
+- pip install tox
 script:
-  - tox
+- tox
+deploy:
+  provider: pypi
+  user: gremu
+  password:
+    secure: HAgxb7ebUfIQSfcxtjKoXO3FCBiujCo4GU2lYO8IUPeSdurPG6e+uABzwg88d7Zt1Zuay2eleAJzqhvwU2bCOKr68wjkNw3yWRslvLAMK3vj2LPPoWYsgmLJ1YiOvPloCdD2sIVSmpLEiN5HLUteh5j6D2BUbw67a9S2TXx1J8c=
+  on:
+    tags: true
+    repo: gregmuellegger/django-superform
+    condition: "$TOXENV = py35-18"
