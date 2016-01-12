@@ -23,7 +23,16 @@ class CompositeBoundField(BoundField):
             yield item
 
     # __len__, no changes required
-    # __getitem__, no changes required
+
+    def __getitem__(self, item):
+        """
+        Allow named access to the form fields and forms contained in the
+        composite fields. For ``FormField``s you get a bound field, for
+        ``FormSetField`` you can use and integer index lookup for a specific
+        form.
+        """
+        composite_item = self.form.get_composite_field_value(self.name)
+        return composite_item[item]
 
     def __nonzero__(self):
         """
