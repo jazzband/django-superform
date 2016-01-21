@@ -25,15 +25,23 @@ class AccountForm(SuperForm):
     nested_form = FormField(NameForm)
 
 
+class SubclassedAccountForm(AccountForm):
+    nested_form_2 = FormField(NameForm)
+
+
 class SuperFormTests(TestCase):
-    def test_declared_composite_fields(self):
+    def test_base_composite_fields(self):
         self.assertEqual(list(AccountForm.base_fields.keys()), ['username'])
-        self.assertTrue(hasattr(AccountForm, 'composite_fields'))
-        self.assertEqual(list(AccountForm.composite_fields.keys()), ['emails', 'nested_form'])
-        field = AccountForm.composite_fields['emails']
+
+        self.assertTrue(hasattr(AccountForm, 'base_composite_fields'))
+        self.assertEqual(list(AccountForm.base_composite_fields.keys()), ['emails', 'nested_form'])
+        self.assertTrue(hasattr(SubclassedAccountForm, 'base_composite_fields'))
+        self.assertEqual(list(SubclassedAccountForm.base_composite_fields.keys()), ['emails', 'nested_form', 'nested_form_2'])
+
+        field = AccountForm.base_composite_fields['emails']
         self.assertIsInstance(field, FormSetField)
 
-        field = AccountForm.composite_fields['nested_form']
+        field = AccountForm.base_composite_fields['nested_form']
         self.assertIsInstance(field, FormField)
 
         self.assertFalse(hasattr(AccountForm, 'forms'))

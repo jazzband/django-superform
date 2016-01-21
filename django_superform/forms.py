@@ -80,6 +80,8 @@ from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
 from django.forms.models import ModelFormMetaclass
 from django.utils import six
+import copy
+
 from .boundfield import CompositeBoundField
 from .fields import CompositeField
 
@@ -89,31 +91,6 @@ except ImportError:
     from django.utils.datastructures import SortedDict as OrderedDict
 
 
-def get_declared_composite_fields(bases, attrs):
-    """
-    Create a list of CompositeField instances from the passed in `attrs`, plus
-    any other composite fields of the base classes (in `bases`).
-    """
-    composite_fields = [
-        (field_name, attrs.pop(field_name))
-        for field_name, obj in list(six.iteritems(attrs))
-        if isinstance(obj, CompositeField)]
-
-    composite_fields.sort(key=lambda x: x[1].creation_counter)
-
-    # If this class is subclassing another Form, add that Form's
-    # composite_fields.
-    # Note that we loop over the bases in *reverse*. This is necessary in
-    # order to preserve the correct order of composite fields.
-    for base in bases[::-1]:
-        if hasattr(base, 'composite_fields'):
-            composite_fields = (
-                list(six.iteritems(base.composite_fields)) +
-                composite_fields)
-
-    return OrderedDict(composite_fields)
-
-
 class DeclerativeCompositeFieldsMetaclass(type):
     """
     Metaclass that converts FormField and FormSetField attributes to a
@@ -121,10 +98,34 @@ class DeclerativeCompositeFieldsMetaclass(type):
     fields from parent classes.
     """
 
-    def __new__(cls, name, bases, attrs):
-        attrs['composite_fields'] = get_declared_composite_fields(bases, attrs)
-        new_class = super(DeclerativeCompositeFieldsMetaclass, cls).__new__(
-            cls, name, bases, attrs)
+    def __new__(mcs, name, bases, attrs):
+        # Collect composite fields from current class.
+        current_fields = []
+        for key, value in list(attrs.items()):
+            if isinstance(value, CompositeField):
+                current_fields.append((key, value))
+                attrs.pop(key)
+        current_fields.sort(key=lambda x: x[1].creation_counter)
+        attrs['declared_composite_fields'] = OrderedDict(current_fields)
+
+        new_class = super(DeclerativeCompositeFieldsMetaclass, mcs).__new__(
+            mcs, name, bases, attrs)
+
+        # Walk through the MRO.
+        declared_fields = OrderedDict()
+        for base in reversed(new_class.__mro__):
+            # Collect fields from base class.
+            if hasattr(base, 'declared_composite_fields'):
+                declared_fields.update(base.declared_composite_fields)
+
+            # Field shadowing.
+            for attr, value in base.__dict__.items():
+                if value is None and attr in declared_fields:
+                    declared_fields.pop(attr)
+
+        new_class.base_composite_fields = declared_fields
+        new_class.declared_composite_fields = declared_fields
+
         return new_class
 
 
@@ -198,6 +199,13 @@ class SuperFormMixin(object):
         """
         Setup the forms and formsets.
         """
+        # The base_composite_fields class attribute is the *class-wide*
+        # definition of fields. Because a particular *instance* of the class
+        # might want to alter self.composite_fields, we create
+        # self.composite_fields here by copying base_composite_fields.
+        # Instances should always modify self.composite_fields; they should not
+        # modify base_composite_fields.
+        self.composite_fields = copy.deepcopy(self.base_composite_fields)
         self.forms = OrderedDict()
         self.formsets = OrderedDict()
         for name, field in self.composite_fields.items():
