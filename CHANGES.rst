@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.3.1
+-----
+
+* ``SuperForm.composite_fields`` dict is not longer shared between form
+  instances. Every new form instances get's a deep copy. So changes to it
+  won't leak into other instances of the same form class.
+
 0.3.0
 -----
 
