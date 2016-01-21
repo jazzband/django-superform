@@ -271,7 +271,8 @@ class SuperModelFormMixin(SuperFormMixin):
         if hasattr(self, 'save_m2m'):
             _original_save_m2m = self.save_m2m
         else:
-            _original_save_m2m = lambda: None
+            def _original_save_m2m():
+                return None
 
         def augmented_save_m2m():
             _original_save_m2m()
