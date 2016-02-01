@@ -169,8 +169,8 @@ class FormField(CompositeField):
         kwargs = self.get_kwargs(form, name)
         form_class = self.get_form_class(form, name)
         composite_form = form_class(
-            form.data if form.is_bound else None,
-            form.files if form.is_bound else None,
+            data=form.data if form.is_bound else None,
+            files=form.files if form.is_bound else None,
             **kwargs)
         return composite_form
 
