@@ -100,6 +100,14 @@ logic in the form it self where it belongs and use generic views like
 
 And it just works.
 
+.. _Requirements:
+
+Requirements
+------------
+
+- Python 2.7 or Python 3.3+ or PyPy
+- Django 1.4+
+
 Documentation
 -------------
 
