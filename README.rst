@@ -3,9 +3,9 @@ django-superform
 
 **Less sucking formsets.**
 
-|build| |docs| |package| |gitter|
+|build| |package| |gitter|
 
-Changelog_ | Requirements_ | Installation_
+Documentation_ | Changelog_ | Requirements_ | Installation_
 
 A ``SuperForm`` is absolutely super if you want to nest a lot of forms in each
 other. Use formsets and nested forms inside the ``SuperForm``. The
@@ -150,7 +150,9 @@ Development
 Documentation
 -------------
 
-Full documentation is available on Read The Docs: https://django-superform.readthedocs.org/
+Full documentation is available on Read the Docs: https://django-superform.readthedocs.org/
+
+.. _Documentation: https://django-superform.readthedocs.org/
 
 .. _Changelog:
 
@@ -160,10 +162,6 @@ Full documentation is available on Read The Docs: https://django-superform.readt
     :alt: Build Status
     :scale: 100%
     :target: https://travis-ci.org/gregmuellegger/django-superform
-.. |docs| image:: https://readthedocs.org/projects/django-superform/badge/?version=latest
-    :alt: Documentation Status
-    :scale: 100%
-    :target: https://django-superform.readthedocs.org/
 .. |package| image:: https://badge.fury.io/py/django-superform.svg
     :alt: Package Version
     :scale: 100%
