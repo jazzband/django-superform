@@ -111,7 +111,7 @@ Install the desired version with pip_::
 
 .. _pip: https://pip.pypa.io/en/stable/
 
-Then add ``django-superform`` to ``INSTALLED_APPS`` in your settings file::
+Then add ``django-superform`` to ``INSTALLED_APPS`` in your settings file:
 
 .. code-block:: python
 
