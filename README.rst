@@ -108,6 +108,27 @@ Requirements
 - Python 2.7 or Python 3.3+ or PyPy
 - Django 1.4+
 
+.. _Installation:
+
+Installation
+------------
+
+Install the desired version with pip_::
+
+    pip install django-superform
+
+.. _pip: https://pip.pypa.io/en/stable/
+
+Then add ``django-superform`` to ``INSTALLED_APPS`` in your settings file::
+
+.. code-block:: python
+
+    INSTALLED_APPS = (
+        # ...
+        'django_superform',
+        # ...
+    )
+
 Documentation
 -------------
 
