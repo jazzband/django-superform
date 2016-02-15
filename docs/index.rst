@@ -9,6 +9,7 @@ handling multiple forms on one page gets *super* easy.
 .. toctree::
     :maxdepth: 2
 
+    install
     quickstart
     forms
     fields
