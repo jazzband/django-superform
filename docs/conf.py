@@ -13,6 +13,7 @@
 # serve to show the default.
 
 import codecs
+from datetime import date
 import re
 import sys
 from os import path
@@ -52,7 +53,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'django-superform'
-copyright = u'2014, Gregor Müllegger'
+copyright = str(date.today().year) + u', Gregor Müllegger'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
