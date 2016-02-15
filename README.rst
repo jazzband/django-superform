@@ -134,6 +134,10 @@ Documentation
 
 Full documentation is available on Read The Docs: https://django-superform.readthedocs.org/
 
+.. _Changelog:
+
+.. include:: ./CHANGES.rst
+
 .. |build| image:: https://travis-ci.org/gregmuellegger/django-superform.svg?branch=master
     :alt: Build Status
     :scale: 100%
