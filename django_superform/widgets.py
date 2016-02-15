@@ -28,28 +28,17 @@ class TemplateWidget(forms.Widget):
             'name': name,
             'hidden': self.is_hidden,
             'required': self.is_required,
-            'True': True,
             # In our case ``value`` is the form or formset instance.
             'value': value,
         }
         if self.value_context_name:
             context[self.value_context_name] = value
 
-        # True is injected in the context to allow stricter comparisons
-        # for widget attrs. See #25.
         if self.is_hidden:
             context['hidden'] = True
 
         context.update(self.get_context_data())
         context['attrs'] = self.build_attrs(attrs)
-
-        for key, attr in context['attrs'].items():
-            if attr == 1:
-                # 1 == True so 'key="1"' will show up only as 'key'
-                # Casting to a string so that it doesn't equal to True
-                # See #25.
-                if not isinstance(attr, bool):
-                    context['attrs'][key] = str(attr)
 
         return context
 
