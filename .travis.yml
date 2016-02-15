@@ -1,34 +1,34 @@
 language: python
 python: 2.7
 env:
-- TOXENV=py26-14
-- TOXENV=py26-16
-- TOXENV=py27-14
-- TOXENV=py27-16
-- TOXENV=py27-17
-- TOXENV=py27-18
-- TOXENV=py27-19
-- TOXENV=py33-16
-- TOXENV=py33-17
-- TOXENV=py34-16
-- TOXENV=py34-17
-- TOXENV=py34-18
-- TOXENV=py35-18
-- TOXENV=py35-19
-- TOXENV=pypy-14
-- TOXENV=pypy-16
-- TOXENV=pypy-17
-- TOXENV=pypy-18
-- TOXENV=pypy-19
-- TOXENV=docs
-- TOXENV=flake8
+- TOX_ENV=py26-14
+- TOX_ENV=py26-16
+- TOX_ENV=py27-14
+- TOX_ENV=py27-16
+- TOX_ENV=py27-17
+- TOX_ENV=py27-18
+- TOX_ENV=py27-19
+- TOX_ENV=py33-16
+- TOX_ENV=py33-17
+- TOX_ENV=py34-16
+- TOX_ENV=py34-17
+- TOX_ENV=py34-18
+- TOX_ENV=py35-18
+- TOX_ENV=py35-19
+- TOX_ENV=pypy-14
+- TOX_ENV=pypy-16
+- TOX_ENV=pypy-17
+- TOX_ENV=pypy-18
+- TOX_ENV=pypy-19
+- TOX_ENV=docs
+- TOX_ENV=flake8
 install:
 - pip install tox
 script:
 - tox
 after_success:
 - pip install codecov
-- codecov -e TOXENV
+- codecov -e TOX_ENV
 deploy:
   provider: pypi
   user: gremu
@@ -37,4 +37,4 @@ deploy:
   on:
     tags: true
     repo: gregmuellegger/django-superform
-    condition: "$TOXENV = py35-18"
+    condition: "$TOX_ENV = py35-18"
