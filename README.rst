@@ -121,6 +121,32 @@ Then add ``django-superform`` to ``INSTALLED_APPS`` in your settings file::
         # ...
     )
 
+Development
+-----------
+
+- Clone django-superform::
+
+    git clone git@github.com:gregmuellegger/django-superform.git
+
+- ``cd`` into the repository::
+
+    cd django-superform
+
+- Create a new virtualenv_.
+- Install the project requirements::
+
+    pip install -e .
+    pip install -r requirements.txt
+
+- Run the test suite::
+
+    tox
+    # Or if you want to iterate quickly and not test against all supported
+    # Python and Django versions:
+    py.test
+
+.. _virtualenv: https://virtualenv.pypa.io/en/latest/
+
 Documentation
 -------------
 
