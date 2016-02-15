@@ -42,4 +42,8 @@ the :doc:`quickstart guide <quickstart>` to see how to use it in your project.
     howitworks
     changelog
 
-:ref:`genindex` | :ref:`modindex` | :ref:`search`
+:ref:`genindex` | :ref:`search`
+
+.. ::
+
+    :ref:`modindex`
