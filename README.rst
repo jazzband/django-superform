@@ -5,6 +5,8 @@ django-superform
 
 |build| |docs| |package| |gitter|
 
+Changelog_ | Requirements_ | Installation_
+
 A ``SuperForm`` is absolutely super if you want to nest a lot of forms in each
 other. Use formsets and nested forms inside the ``SuperForm``. The
 ``SuperForm`` will take care of its children!
