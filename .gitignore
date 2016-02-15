@@ -4,3 +4,4 @@
 /dist/
 /django_superform.egg-info/
 /.cache/
+/.coverage
