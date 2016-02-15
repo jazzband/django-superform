@@ -1,8 +1,8 @@
 include README.rst
 include CHANGES.rst
+include requirements.txt
 recursive-include django_superform/templates *.html
-recursive-include tests *.py *.html
-recursive-include requirements *.txt
+recursive-include tests *.py *.html *.txt
 recursive-include docs *.rst *.png
 include docs/Makefile docs/make.bat docs/conf.py
 prune docs/_build
