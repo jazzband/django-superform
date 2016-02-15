@@ -134,12 +134,6 @@ Documentation
 
 Full documentation is available on Read The Docs: https://django-superform.readthedocs.org/
 
-----
-
-Developed by Gregor Müllegger in cooperation with Team23_.
-
-.. _Team23: http://www.team23.de/
-
 .. |build| image:: https://travis-ci.org/gregmuellegger/django-superform.svg?branch=master
     :alt: Build Status
     :scale: 100%
