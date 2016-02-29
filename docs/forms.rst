@@ -5,6 +5,7 @@ Available Forms
 -------------
 
 .. autoclass:: django_superform.forms.SuperForm
+    :members: __getitem__
 
 
 ``SuperFormMixin``
@@ -17,6 +18,7 @@ Available Forms
 ------------------
 
 .. autoclass:: django_superform.forms.SuperModelForm
+    :members: save, save_form, save_forms, save_formsets
 
 
 ``SuperModelFormMixin``
