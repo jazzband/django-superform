@@ -39,6 +39,7 @@ the :doc:`quickstart guide <quickstart>` to see how to use it in your project.
     quickstart
     forms
     fields
+    boundfield
     howitworks
     changelog
 
