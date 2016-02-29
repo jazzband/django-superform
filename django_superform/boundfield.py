@@ -4,7 +4,9 @@ from django.forms.forms import BoundField
 class CompositeBoundField(BoundField):
     """
     This is an emulation of the BoundField that is returned if you call
-    ``form['field_name']`` for an ordinary django field.
+    ``form['field_name']`` for an ordinary django field. A
+    ``CompositeBoundField`` will be used if you access a nested form or formset
+    with ``form['nested_form']``.
 
     The ``CompositeBoundField`` has the purpose of providing the same interface
     to other libraries that use a ``BoundField`` instance for rendering.
@@ -15,8 +17,8 @@ class CompositeBoundField(BoundField):
 
     def __iter__(self):
         """
-        Iterates over the composite field. For ``FormSetField``s this will
-        return form instances. For ``FormField``s this will return bound form
+        Iterates over the composite field. For ``FormSetField`` this will
+        return form instances. For ``FormField`` this will return bound form
         fields.
         """
         for item in self.form.get_composite_field_value(self.name):
@@ -30,6 +32,18 @@ class CompositeBoundField(BoundField):
         composite fields. For ``FormField``s you get a bound field, for
         ``FormSetField`` you can use and integer index lookup for a specific
         form.
+
+        Examples:
+
+        .. code:: python
+
+            # Gives ``street`` field of nested ``address`` form.
+            form['address']['street']
+
+        .. code:: django
+
+            {# That is useful in the template as well: #}
+            {{ form.address.street }}
         """
         composite_item = self.form.get_composite_field_value(self.name)
         return composite_item[item]
@@ -58,17 +72,30 @@ class CompositeBoundField(BoundField):
     # as_widget, no changes required
 
     def as_text(self, attrs=None, **kwargs):
-        # Not supported. This does not make sense for a CompositeField.
+        """
+        Not supported. This does not make sense for a CompositeBoundField.
+
+        Will raise ``NotImplementedError``.
+        """
         raise NotImplementedError
 
     def as_textarea(self, attrs=None, **kwargs):
-        # Not supported. This does not make sense for a CompositeField.
+        """
+        Not supported. This does not make sense for a CompositeBoundField.
+
+        Will raise ``NotImplementedError``.
+        """
         raise NotImplementedError
 
     def as_hidden(self, attrs=None, **kwargs):
         """
-        Returns a string of HTML for representing this as multiple
-        <input type="hidden">.
+        Raises ``NotImplementedError``.
+
+        An implementation might be useful, which could return a string of HTML
+        for representing the nested form or formsets as multiple <input
+        type="hidden">.
+
+        Pull request are welcome.
         """
         # TODO: This might make sense. But we don't support it yet.
         raise NotImplementedError
@@ -76,9 +103,9 @@ class CompositeBoundField(BoundField):
     @property
     def data(self):
         """
-        Returns the data for this BoundField, or None if it wasn't given.
+        Is always ``None``. This doesn't make much sense for a
+        ``CompositeField``.
         """
-        # Not supported. This does not make sense for a CompositeField.
         return None
 
     def value(self):
