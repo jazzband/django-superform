@@ -1,20 +1,64 @@
-TODO: This document is quite raw. Needs improvement.
+How it works
+============
 
-Form class needs to subclass from :class:`~django_superform.forms.SuperForm`
-or :class:`~django_superform.forms.SuperModelForm`.
+All super forms try to transparently handle the nested forms so that you can
+still expect the form to work in all generic usecases, like using the form with
+a class based view and similiar situations.
 
-During instantiation:
+It might still be useful to understand what is happening under the hood though.
+It will help to know what places to look into if something is not working for
+you as expected.
 
-* composite fields get initialized
-* The fields ``get_form`` and ``get_formsets`` methods are called which
-  instantiate the nested form/formset. They get the same data/files that are
-  passed into the super form. Initial values are passed through. EXAMPLE.
-* Those get attached into ``form.forms`` and ``form.formsets``.
+So here is a description of the life cycle of a super form and its composite
+fields.
 
-In template you can get a bound field (like with django's normal form fields) with
-{{ form.composite_field_name }}. Or you can get the real form instance with
-``{{ form.forms.composite_field_name }}``, or the formset: ``{{
-form.formsets.composite_field_name }}``.
+The ``SuperFormMetaclass``
+--------------------------
+
+A super form is using a metaclass to discover all the fields used the form,
+just like Django does it with normal form fields. That's what the
+:class:`~django_superform.forms.SuperFormMetaclass` is for.
+
+That will discover all the used :class:`~django_superform.fields.FormField` and
+:class:`~django_superform.fields.FormSetField` on your form and puts the
+them in a attribute called ``base_composite_fields`` on the form class.
+
+So you can inspect all the composite fields with it:
+
+.. code:: python
+
+    class PersonForm(SuperForm):
+        name = forms.CharField()
+        social_accounts = FormSet(SocialAccountsForm)
+        addresses = FormSetField(AddressForm)
+
+    print(PersonForm.base_composite_fields)
+
+On form instantiation
+---------------------
+
+When instantiating the form, the composite fields get initialized. The
+initialization will instantiate the nested forms and formsets.
+
+So when creating a super form instance like ``PersonForm()``, it will loop over
+all composite fields and call their ``get_form()`` and ``get_formset`` methods.
+
+These methods will instantiated the nested forms. The nested forms and formsets
+will then be stored in the ``forms`` and ``formsets`` dictionaries on the super
+form. Using the ``PersonForm`` from above this will be inspectable like this in
+the code:
+
+.. code:: python
+
+    form = PersonForm()
+    form.forms['social_accounts']  # This is an instance of SocialAccountsForm.
+    form.formsets['addresses']     # This is a formset instance containing
+                                   # multiple AddressForms.
+
+Validating the form
+-------------------
+
+TODO: Refine.
 
 Then when it gets to validation, the super form's ``full_clean()`` and
 ``is_valid()`` methods will clean and validate the nested forms/formsets as
@@ -24,8 +68,8 @@ valid but any of the nested forms/formsets is not.
 Errors will be attached to ``form.errors``. For forms it will be a error dict,
 for formsets it will be a list of the errors of the formset's forms.
 
-On saving ``SuperModelForm``
-----------------------------
+Saving model forms
+------------------
 
 The super form's ``save()`` method will first save the model that it takes
 care of. Then the nested forms and then the nested formsets. It will only
@@ -37,6 +81,15 @@ The ``commit`` argument is respected and passed down. So nothing is saved to
 the DB if you don't want it to. In that case, django forms will get a
 dynamically created ``save_m2m`` method that can be called later on to then
 save all the related stuff. The super form hooks in there to also save the
-nested forms and formsets then (TODO: check, really?). And ofcourse it calls
-their ``save_m2m`` methods :)
+nested forms and formsets then. And ofcourse it calls their ``save_m2m``
+methods :)
 
+In the template
+---------------
+
+TODO. How to use the composite bound fields. How to display errors.
+
+In template you can get a bound field (like with django's normal form fields) with
+{{ form.composite_field_name }}. Or you can get the real form instance with
+``{{ form.forms.composite_field_name }}``, or the formset: ``{{
+form.formsets.composite_field_name }}``.
