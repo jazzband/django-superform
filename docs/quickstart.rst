@@ -1,4 +1,6 @@
-Quickstart with ``django-superform``
-====================================
+.. _quickstart:
+
+Quickstart
+==========
 
 TODO.
