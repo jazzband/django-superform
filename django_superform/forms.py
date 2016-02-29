@@ -248,7 +248,7 @@ class SuperModelFormMixin(SuperFormMixin):
         manually later. When you call ``save_m2m``, the ``save_formsets``
         method will be executed as well.
         """
-        saved_obj = super(SuperModelFormMixin, self).save(commit=commit)
+        saved_obj = self.save_form(commit=commit)
         self.save_forms(commit=commit)
         self.save_formsets(commit=commit)
         return saved_obj
@@ -280,6 +280,18 @@ class SuperModelFormMixin(SuperFormMixin):
 
         self.save_m2m = augmented_save_m2m
         setattr(self, name, additional_saves)
+
+    def save_form(self, commit=True):
+        """
+        This calls Django's ``ModelForm.save()``. It only takes care of
+        saving this actual form, and leaves the nested forms and formsets
+        alone.
+
+        We separate this out of the
+        :meth:`~django_superform.forms.SuperModelForm.save` method to make
+        extensibility easier.
+        """
+        return super(SuperModelFormMixin, self).save(commit=commit)
 
     def save_forms(self, commit=True):
         saved_composites = []
