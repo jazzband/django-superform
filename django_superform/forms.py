@@ -176,6 +176,12 @@ class SuperFormMixin(object):
         super(SuperFormMixin, self).__init__(*args, **kwargs)
         self._init_composite_fields()
 
+    def __iter__(self):
+        for name in self.fields:
+            yield self[name]
+        for name in self.composite_fields:
+            yield self[name]
+
     def __getitem__(self, name):
         """
         Returns a ``django.forms.BoundField`` for the given field name. It also

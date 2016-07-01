@@ -52,6 +52,12 @@ class CompositeBoundFieldTests(TestCase):
         self.assertTrue(isinstance(bf, CompositeBoundField))
         self.assertEqual(bool(bf), True)
 
+    def test_it_iterates_over_own_field(self):
+        form = AccountForm()
+        fields = [field.name for field in form]
+        self.assertEqual(
+            fields, ['username', 'emails', 'multiple_names', 'nested_form'])
+
     def test_it_iterates_over_form_fields(self):
         form = AccountForm()
         composite_bf = form['nested_form']
