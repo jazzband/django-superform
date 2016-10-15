@@ -1,4 +1,5 @@
 from django import forms
+from django.template import Context, Template
 from django.test import TestCase
 from django_superform import SuperForm, FormField
 
@@ -95,3 +96,17 @@ class FormFieldTests(TestCase):
         self.assertEqual(address1['city'].value(), 'Testcity')
         self.assertEqual(address2['street'].value(), 'Barboulevard')
         self.assertEqual(address2['city'].value(), None)
+
+    def test_rendering_form_field(self):
+        form = MultiAddressForm(initial={
+            'address1': {
+                    'street': 'Fooway',
+            },
+            'address2': {
+                'street': 'Barboulevard',
+            }
+        })
+        template = Template('{{ form.address1 }} {{ form.address2 }}')
+        rendered = template.render(Context({'form': form}))
+        assert 'value="Fooway"' in rendered
+        assert 'value="Barboulevard"' in rendered

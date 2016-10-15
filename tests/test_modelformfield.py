@@ -1,4 +1,5 @@
 from django import forms
+from django.template import Context, Template
 from django.test import TestCase
 from django_superform import SuperModelForm, ModelFormField
 
@@ -132,3 +133,12 @@ class FormFieldTests(TestCase):
         form.save()
         self.assertEqual(Post.objects.count(), 1)
         self.assertEqual(Series.objects.count(), 0)
+
+    def test_form_render(self):
+        form = PostForm(initial={
+            'series': {
+                'title': 'my title',
+            },
+        })
+        rendered = Template('{{ form.series }}').render(Context({'form': form}))
+        assert 'value="my title"' in rendered
