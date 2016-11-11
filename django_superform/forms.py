@@ -82,7 +82,6 @@ from django.forms.models import ModelFormMetaclass
 from django.utils import six
 import copy
 
-from .boundfield import CompositeBoundField
 from .fields import CompositeField
 
 try:
@@ -184,7 +183,7 @@ class SuperFormMixin(object):
         """
         if name not in self.fields and name in self.composite_fields:
             field = self.composite_fields[name]
-            return CompositeBoundField(self, field, name)
+            return field.get_bound_field(self, name)
         return super(SuperFormMixin, self).__getitem__(name)
 
     def add_composite_field(self, name, field):

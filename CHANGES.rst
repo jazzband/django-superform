@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.4.0
+-----
+* Fix formset rendering in Django 1.9. `#17`_
+* Add support for Django 1.9's ``get_bound_field``. `#18`_
+
+.. _#17: https://github.com/gregmuellegger/django-superform/pull/17
+.. _#18: https://github.com/gregmuellegger/django-superform/pull/18
+
 0.3.1
 -----
 

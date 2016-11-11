@@ -1,5 +1,6 @@
 from django.forms.models import inlineformset_factory
 
+from .boundfield import CompositeBoundField
 from .widgets import FormWidget, FormSetWidget
 
 
@@ -59,6 +60,9 @@ class CompositeField(BaseCompositeField):
         # Let the widget know about the field for easier complex renderings in
         # the template.
         self.widget.field = self
+
+    def get_bound_field(self, form, field_name):
+        return CompositeBoundField(form, self, field_name)
 
     def get_prefix(self, form, name):
         """
