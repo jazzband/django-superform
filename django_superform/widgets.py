@@ -60,6 +60,7 @@ class FormWidget(TemplateWidget):
     def value_from_datadict(self, data, files, name):
         return self.attrs['form_class'](data, files, prefix=name)
 
+
 class FormSetWidget(TemplateWidget):
     template_name = 'superform/formsetfield.html'
     value_context_name = 'formset'

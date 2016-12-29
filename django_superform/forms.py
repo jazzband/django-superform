@@ -75,14 +75,9 @@ You're welcome.
 
 """
 
-import copy
-from functools import reduce
-
 import django
 from django import forms
-from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
-from django.forms.models import ModelFormMetaclass
-from django.utils import six
+from django.forms.forms import ErrorDict, ErrorList
 
 from .fields import CompositeField
 
@@ -118,12 +113,14 @@ class SuperFormMixin(object):
         self._init_composite_fields()
 
     if django.VERSION < (1, 9):
-        # This behavior is not needed after django 1.9 introduced get_bound_field.
+        # This behavior is not needed after django 1.9 introduced
+        # get_bound_field.
 
         def __getitem__(self, name):
             """
-            Returns a ``django.forms.BoundField`` for the given field name. It also
-            returns :class:`~django_superform.boundfield.CompositeBoundField`
+            Returns a ``django.forms.BoundField`` for the given field name.
+            It also returns
+            :class:`~django_superform.boundfield.CompositeBoundField`
             instances for composite fields.
             """
             field = self.fields[name]
@@ -155,7 +152,6 @@ class SuperFormMixin(object):
         """
         self.forms = OrderedDict()
         self.formsets = OrderedDict()
-        composite_fields = [field for field in self.fields if isinstance(field, CompositeField)]
         for name, field in self.fields.items():
             if isinstance(field, CompositeField):
                 self._init_composite_field(name, field)
