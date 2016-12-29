@@ -92,75 +92,16 @@ except ImportError:
     from django.utils.datastructures import SortedDict as OrderedDict
 
 
-class DeclerativeCompositeFieldsMetaclass(type):
-    """
-    Metaclass that converts FormField and FormSetField attributes to a
-    dictionary called `composite_fields`. It will also include all composite
-    fields from parent classes.
-    """
-
-    def __new__(mcs, name, bases, attrs):
-        # Collect composite fields from current class.
-        current_fields = []
-        for key, value in list(attrs.items()):
-            if isinstance(value, CompositeField):
-                current_fields.append((key, value))
-        current_fields.sort(key=lambda x: x[1].creation_counter)
-        attrs['declared_composite_fields'] = OrderedDict(current_fields)
-
-        new_class = super(DeclerativeCompositeFieldsMetaclass, mcs).__new__(
-            mcs, name, bases, attrs)
-
-        # Walk through the MRO.
-        declared_fields = OrderedDict()
-        for base in reversed(new_class.__mro__):
-            # Collect fields from base class.
-            if hasattr(base, 'declared_composite_fields'):
-                declared_fields.update(base.declared_composite_fields)
-
-            # Field shadowing.
-            for attr, value in base.__dict__.items():
-                if value is None and attr in declared_fields:
-                    declared_fields.pop(attr)
-
-        new_class.base_composite_fields = declared_fields
-        new_class.declared_composite_fields = declared_fields
-
-        return new_class
-
-
-class SuperFormMetaclass(
-        DeclerativeCompositeFieldsMetaclass,
-        DeclarativeFieldsMetaclass):
-    """
-    Metaclass for :class:`~django_superform.forms.SuperForm`.
-    """
-
-
-class SuperModelFormMetaclass(
-        DeclerativeCompositeFieldsMetaclass,
-        ModelFormMetaclass):
-    """
-    Metaclass for :class:`~django_superform.forms.SuperModelForm`.
-    """
-
-
 class SuperFormMixin(object):
     """
     The base class for all super forms. It does not inherit from any other
-    classes, so you are free to mix it into any custom form class you have. You
-    need to use it together with ``SuperFormMetaclass``, like this:
+    classes, so you are free to mix it into any custom form class you have.
 
     .. code:: python
 
         from django_superform import SuperFormMixin
-        from django_superform import SuperFormMetaclass
-        import six
 
-        class MySuperForm(six.with_metaclass(
-                SuperFormMetaclass,
-                SuperFormMixin,
-                MyCustomForm)):
+        class MySuperForm(MyCustomForm):
             pass
 
     The goal of a superform is to behave just like a normal django form but is
@@ -214,9 +155,10 @@ class SuperFormMixin(object):
         """
         self.forms = OrderedDict()
         self.formsets = OrderedDict()
-        for name in self.base_composite_fields:
-            field = self.fields[name]
-            self._init_composite_field(name, field)
+        composite_fields = [field for field in self.fields if isinstance(field, CompositeField)]
+        for name, field in self.fields.items():
+            if isinstance(field, CompositeField):
+                self._init_composite_field(name, field)
 
     def full_clean(self):
         """
@@ -242,13 +184,8 @@ class SuperModelFormMixin(SuperFormMixin):
     .. code:: python
 
         from django_superform import SuperModelFormMixin
-        from django_superform import SuperModelFormMetaclass
-        import six
 
-        class MySuperForm(six.with_metaclass(
-                SuperModelFormMetaclass,
-                SuperModelFormMixin,
-                MyCustomModelForm)):
+        class MySuperForm(SuperModelFormMixin, MyCustomModelForm)):
             pass
     """
 
@@ -350,8 +287,7 @@ class SuperModelFormMixin(SuperFormMixin):
         self._extend_save_m2m('save_formsets_m2m', saved_composites)
 
 
-class SuperModelForm(six.with_metaclass(SuperModelFormMetaclass,
-                                        SuperModelFormMixin, forms.ModelForm)):
+class SuperModelForm(SuperModelFormMixin, forms.ModelForm):
     """
     The ``SuperModelForm`` works like a Django ``ModelForm`` but has the
     capabilities of nesting like :class:`~django_superform.forms.SuperForm`.
@@ -360,8 +296,7 @@ class SuperModelForm(six.with_metaclass(SuperModelFormMetaclass,
     """
 
 
-class SuperForm(six.with_metaclass(SuperFormMetaclass,
-                                   SuperFormMixin, forms.Form)):
+class SuperForm(SuperFormMixin, forms.Form):
     """
     The base class for all super forms. The goal of a superform is to behave
     just like a normal django form but is able to take composite fields, like

@@ -12,28 +12,6 @@ you as expected.
 So here is a description of the life cycle of a super form and its composite
 fields.
 
-The ``SuperFormMetaclass``
---------------------------
-
-A super form is using a metaclass to discover all the fields used the form,
-just like Django does it with normal form fields. That's what the
-:class:`~django_superform.forms.SuperFormMetaclass` is for.
-
-That will discover all the used :class:`~django_superform.fields.FormField` and
-:class:`~django_superform.fields.FormSetField` on your form and puts the
-them in a attribute called ``base_composite_fields`` on the form class.
-
-So you can inspect all the composite fields with it:
-
-.. code:: python
-
-    class PersonForm(SuperForm):
-        name = forms.CharField()
-        social_accounts = FormSet(SocialAccountsForm)
-        addresses = FormSetField(AddressForm)
-
-    print(PersonForm.base_composite_fields)
-
 On form instantiation
 ---------------------
 
