@@ -1,52 +1,11 @@
 from django.forms.models import inlineformset_factory
+from django.forms import Field
 
 from .boundfield import CompositeBoundField
 from .widgets import FormWidget, FormSetWidget
 
 
-class BaseCompositeField(object):
-    """
-    The ``BaseCompositeField`` takes care of keeping some kind of compatibility
-    with the ``django.forms.Field`` class.
-    """
-
-    widget = None
-    show_hidden_initial = False
-
-    # Tracks each time a FormSetField instance is created. Used to retain
-    # order.
-    creation_counter = 0
-
-    def __init__(self, required=True, widget=None, label=None, help_text='',
-                 localize=False, disabled=False):
-        self.required = required
-        self.label = label
-        self.help_text = help_text
-        self.disabled = disabled
-
-        widget = widget or self.widget
-        if isinstance(widget, type):
-            widget = widget()
-
-        # Trigger the localization machinery if needed.
-        self.localize = localize
-        if self.localize:
-            widget.is_localized = True
-
-        # Let the widget know whether it should display as required.
-        widget.is_required = self.required
-
-        # We do not call self.widget_attrs() here as the original field is
-        # doing it.
-
-        self.widget = widget
-
-        # Increase the creation counter, and save our local copy.
-        self.creation_counter = BaseCompositeField.creation_counter
-        BaseCompositeField.creation_counter += 1
-
-
-class CompositeField(BaseCompositeField):
+class CompositeField(Field):
     """
     Implements the base structure that is relevant for all composite fields.
     This field cannot be used directly, use a subclass of it.
@@ -152,9 +111,9 @@ class FormField(CompositeField):
     widget = FormWidget
 
     def __init__(self, form_class, kwargs=None, **field_kwargs):
+        self.form_class = form_class
         super(FormField, self).__init__(**field_kwargs)
 
-        self.form_class = form_class
         if kwargs is None:
             kwargs = {}
         self.default_kwargs = kwargs
@@ -178,6 +137,9 @@ class FormField(CompositeField):
             files=form.files if form.is_bound else None,
             **kwargs)
         return composite_form
+
+    def widget_attrs(self, widget):
+        return {'form_class': self.form_class}
 
 
 class ModelFormField(FormField):
@@ -349,9 +311,9 @@ class FormSetField(CompositeField):
     widget = FormSetWidget
 
     def __init__(self, formset_class, kwargs=None, **field_kwargs):
+        self.formset_class = formset_class
         super(FormSetField, self).__init__(**field_kwargs)
 
-        self.formset_class = formset_class
         if kwargs is None:
             kwargs = {}
         self.default_kwargs = kwargs
@@ -375,6 +337,9 @@ class FormSetField(CompositeField):
             form.files if form.is_bound else None,
             **kwargs)
         return formset
+
+    def widget_attrs(self, widget):
+        return {'formset_class': self.formset_class}
 
 
 class ModelFormSetField(FormSetField):

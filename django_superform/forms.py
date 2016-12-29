@@ -103,7 +103,6 @@ class DeclerativeCompositeFieldsMetaclass(type):
         for key, value in list(attrs.items()):
             if isinstance(value, CompositeField):
                 current_fields.append((key, value))
-                attrs.pop(key)
         current_fields.sort(key=lambda x: x[1].creation_counter)
         attrs['declared_composite_fields'] = OrderedDict(current_fields)
 

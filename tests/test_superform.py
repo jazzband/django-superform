@@ -31,7 +31,7 @@ class SubclassedAccountForm(AccountForm):
 
 class SuperFormTests(TestCase):
     def test_base_composite_fields(self):
-        self.assertEqual(list(AccountForm.base_fields.keys()), ['username'])
+        self.assertEqual(list(AccountForm.base_fields.keys()), ['username', 'emails', 'nested_form'])
 
         self.assertTrue(hasattr(AccountForm, 'base_composite_fields'))
         self.assertEqual(list(AccountForm.base_composite_fields.keys()), ['emails', 'nested_form'])
