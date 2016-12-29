@@ -172,6 +172,19 @@ class SuperFormMixin(object):
             if not composite.is_valid() and composite._errors:
                 self._errors[field_name] = ErrorList(composite._errors)
 
+    @property
+    def media(self):
+        """
+        Incorporate composite field's media.
+        """
+        media = forms.Media()
+        for name, field in self.fields.items():
+            if isinstance(field, CompositeField):
+                media = media + self.get_composite_field_value(name).media
+            else:
+                media = media + field.widget.media
+        return media
+
 
 class SuperModelFormMixin(SuperFormMixin):
     """
