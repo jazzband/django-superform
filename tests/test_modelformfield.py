@@ -45,9 +45,9 @@ class UseExistingSeriesPostForm(SuperModelForm):
 
 
 class FormFieldTests(TestCase):
-    def test_is_in_composite_fields(self):
+    def test_is_in_fields(self):
         superform = PostForm()
-        self.assertTrue('series' in superform.composite_fields)
+        self.assertTrue('series' in superform.fields)
 
     def test_is_in_forms_attr(self):
         superform = PostForm()

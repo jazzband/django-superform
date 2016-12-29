@@ -33,9 +33,9 @@ class RegistrationForm(SuperForm):
 
 
 class FormFieldTests(TestCase):
-    def test_is_in_composite_fields(self):
+    def test_is_in_fields(self):
         superform = RegistrationForm()
-        self.assertTrue('address' in superform.composite_fields)
+        self.assertTrue('address' in superform.fields)
 
     def test_is_in_forms_attr(self):
         superform = RegistrationForm()

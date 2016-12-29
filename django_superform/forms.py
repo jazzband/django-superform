@@ -59,15 +59,15 @@ special in your view!
 Now to how you can access the instantiated formsets::
 
     >>> form = PostForm()
-    >>> form.composite_fields['comments']
+    >>> form.fields['comments']
     <CommetFormSet: ...>
 
 Or in the template::
 
     {{ form.as_p }}
 
-    {{ form.composite_fields.comments.management_form }}
-    {% for fieldset_form in form.composite_fields.comments %}
+    {{ form.fields.comments.management_form }}
+    {% for fieldset_form in form.fields.comments %}
         {{ fieldset_form.as_p }}
     {% endfor %}
 
@@ -75,12 +75,14 @@ You're welcome.
 
 """
 
+import copy
 from functools import reduce
+
+import django
 from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
 from django.forms.models import ModelFormMetaclass
 from django.utils import six
-import copy
 
 from .fields import CompositeField
 
@@ -174,30 +176,25 @@ class SuperFormMixin(object):
         super(SuperFormMixin, self).__init__(*args, **kwargs)
         self._init_composite_fields()
 
-    def __getitem__(self, name):
-        """
-        Returns a ``django.forms.BoundField`` for the given field name. It also
-        returns :class:`~django_superform.boundfield.CompositeBoundField`
-        instances for composite fields.
-        """
-        if name not in self.fields and name in self.composite_fields:
-            field = self.composite_fields[name]
-            return field.get_bound_field(self, name)
-        return super(SuperFormMixin, self).__getitem__(name)
+    if django.VERSION < (1, 9):
+        # This behavior is not needed after django 1.9 introduced get_bound_field.
 
-    def add_composite_field(self, name, field):
-        """
-        Add a dynamic composite field to the already existing ones and
-        initialize it appropriatly.
-        """
-        self.composite_fields[name] = field
-        self._init_composite_field(name, field)
+        def __getitem__(self, name):
+            """
+            Returns a ``django.forms.BoundField`` for the given field name. It also
+            returns :class:`~django_superform.boundfield.CompositeBoundField`
+            instances for composite fields.
+            """
+            field = self.fields[name]
+            if hasattr(field, 'get_bound_field'):
+                return field.get_bound_field(self, name)
+            return super(SuperFormMixin, self).__getitem__(name)
 
     def get_composite_field_value(self, name):
         """
         Return the form/formset instance for the given field name.
         """
-        field = self.composite_fields[name]
+        field = self.fields[name]
         if hasattr(field, 'get_form'):
             return self.forms[name]
         if hasattr(field, 'get_formset'):
@@ -215,16 +212,10 @@ class SuperFormMixin(object):
         """
         Setup the forms and formsets.
         """
-        # The base_composite_fields class attribute is the *class-wide*
-        # definition of fields. Because a particular *instance* of the class
-        # might want to alter self.composite_fields, we create
-        # self.composite_fields here by copying base_composite_fields.
-        # Instances should always modify self.composite_fields; they should not
-        # modify base_composite_fields.
-        self.composite_fields = copy.deepcopy(self.base_composite_fields)
         self.forms = OrderedDict()
         self.formsets = OrderedDict()
-        for name, field in self.composite_fields.items():
+        for name in self.base_composite_fields:
+            field = self.fields[name]
             self._init_composite_field(name, field)
 
     def full_clean(self):
@@ -242,18 +233,6 @@ class SuperFormMixin(object):
             composite.full_clean()
             if not composite.is_valid() and composite._errors:
                 self._errors[field_name] = ErrorList(composite._errors)
-
-    @property
-    def media(self):
-        """
-        Incooperate composite field's media.
-        """
-        media_list = []
-        media_list.append(super(SuperFormMixin, self).media)
-        for composite_name in self.composite_fields.keys():
-            form = self.get_composite_field_value(composite_name)
-            media_list.append(form.media)
-        return reduce(lambda a, b: a + b, media_list)
 
 
 class SuperModelFormMixin(SuperFormMixin):
@@ -348,7 +327,7 @@ class SuperModelFormMixin(SuperFormMixin):
     def save_forms(self, commit=True):
         saved_composites = []
         for name, composite in self.forms.items():
-            field = self.composite_fields[name]
+            field = self.fields[name]
             if hasattr(field, 'save'):
                 field.save(self, name, composite, commit=commit)
                 saved_composites.append(composite)
@@ -363,7 +342,7 @@ class SuperModelFormMixin(SuperFormMixin):
         """
         saved_composites = []
         for name, composite in self.formsets.items():
-            field = self.composite_fields[name]
+            field = self.fields[name]
             if hasattr(field, 'save'):
                 field.save(self, name, composite, commit=commit)
                 saved_composites.append(composite)

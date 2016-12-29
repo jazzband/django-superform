@@ -50,7 +50,6 @@ class SuperFormTests(TestCase):
     def test_fields_in_instantiated_forms(self):
         form = AccountForm()
 
-        self.assertTrue(hasattr(form, 'composite_fields'))
         self.assertTrue(hasattr(form, 'forms'))
         self.assertTrue(hasattr(form, 'formsets'))
 

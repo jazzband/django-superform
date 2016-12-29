@@ -57,12 +57,20 @@ class FormWidget(TemplateWidget):
     template_name = 'superform/formfield.html'
     value_context_name = 'form'
 
+    @property
+    def media(self):
+        return self.field.form_class().media
+
     def value_from_datadict(self, data, files, name):
         return self.attrs['form_class'](data, files, prefix=name)
 
 class FormSetWidget(TemplateWidget):
     template_name = 'superform/formsetfield.html'
     value_context_name = 'formset'
+
+    @property
+    def media(self):
+        return self.field.formset_class().media
 
     def value_from_datadict(self, data, files, name):
         return self.attrs['formset_class'](data, files, prefix=name)
