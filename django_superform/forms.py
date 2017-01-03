@@ -128,6 +128,18 @@ class SuperFormMixin(object):
                 return field.get_bound_field(self, name)
             return super(SuperFormMixin, self).__getitem__(name)
 
+    def add_prefix(self, name):
+        """
+        Returns the field name with a prefix appended, if this Form has a
+        prefix set.
+
+        Subclasses may wish to override.
+        """
+        field = self.fields.get(name)
+        if isinstance(field, CompositeField):
+            return field.get_prefix(self, name)
+        return super(SuperFormMixin, self).add_prefix(name)
+
     def get_composite_field_value(self, name):
         """
         Return the form/formset instance for the given field name.
