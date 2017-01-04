@@ -28,7 +28,7 @@ a ``SuperForm``::
 -------------
 
 .. autoclass:: django_superform.fields.FormField
-    :members: get_form_class, get_form
+    :members: get_form
 
 ``ModelFormField``
 ------------------

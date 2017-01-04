@@ -118,20 +118,12 @@ class FormField(CompositeField):
             kwargs = {}
         self.default_kwargs = kwargs
 
-    def get_form_class(self, form, name):
-        """
-        Return the form class that will be used for instantiation in
-        ``get_form``. You can override this method in subclasses to change
-        the behaviour of the given form class.
-        """
-        return self.form_class
-
     def get_form(self, form, name):
         """
         Get an instance of the form.
         """
         kwargs = self.get_kwargs(form, name)
-        form_class = self.get_form_class(form, name)
+        form_class = self.form_class
         composite_form = form_class(
             data=form.data if form.is_bound else None,
             files=form.files if form.is_bound else None,
@@ -270,10 +262,6 @@ class ForeignKeyFormField(ModelFormField):
         model = form._meta.model
         field = model._meta.get_field(self.get_field_name(form, name))
         return field.blank
-
-    def get_form_class(self, form, name):
-        form_class = self.form_class
-        return form_class
 
     def get_instance(self, form, name):
         field_name = self.get_field_name(form, name)
