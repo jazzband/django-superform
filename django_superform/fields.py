@@ -249,7 +249,7 @@ class ForeignKeyFormField(ModelFormField):
                 kwargs['empty_permitted'] = True
         return kwargs
 
-    def get_field_name(self, form, name):
+    def get_field_name(self, name):
         return self.field_name or name
 
     def allow_blank(self, form, name):
@@ -260,11 +260,11 @@ class ForeignKeyFormField(ModelFormField):
         if self.blank is not None:
             return self.blank
         model = form._meta.model
-        field = model._meta.get_field(self.get_field_name(form, name))
+        field = model._meta.get_field(self.get_field_name(name))
         return field.blank
 
     def get_instance(self, form, name):
-        field_name = self.get_field_name(form, name)
+        field_name = self.get_field_name(name)
         return getattr(form.instance, field_name)
 
     def save(self, form, name, composite_form, commit):
@@ -276,7 +276,7 @@ class ForeignKeyFormField(ModelFormField):
             saved_obj = super(ForeignKeyFormField, self).save(form, name,
                                                               composite_form,
                                                               commit)
-        setattr(form.instance, self.get_field_name(form, name), saved_obj)
+        setattr(form.instance, self.get_field_name(name), saved_obj)
         if commit:
             form.instance.save()
         else:
