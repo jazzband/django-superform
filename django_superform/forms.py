@@ -153,9 +153,11 @@ class SuperFormMixin(object):
     def _init_composite_field(self, name, field):
         if hasattr(field, 'get_form'):
             form = field.get_form(self, name)
+            field.widget.form = form
             self.forms[name] = form
         if hasattr(field, 'get_formset'):
             formset = field.get_formset(self, name)
+            field.widget.formset = formset
             self.formsets[name] = formset
 
     def _init_composite_fields(self):

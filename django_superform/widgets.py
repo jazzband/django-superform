@@ -54,7 +54,7 @@ class FormWidget(TemplateWidget):
     value_context_name = 'form'
 
     def value_from_datadict(self, data, files, name):
-        return self.attrs['form_class'](data, files, prefix=name)
+        return self.form
 
 
 class FormSetWidget(TemplateWidget):
@@ -62,4 +62,4 @@ class FormSetWidget(TemplateWidget):
     value_context_name = 'formset'
 
     def value_from_datadict(self, data, files, name):
-        return self.attrs['formset_class'](data, files, prefix=name)
+        return self.formset
