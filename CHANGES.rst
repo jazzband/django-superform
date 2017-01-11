@@ -5,9 +5,13 @@ Changelog
 -----
 * Fix formset rendering in Django 1.9. `#17`_
 * Add support for Django 1.9's ``get_bound_field``. `#18`_
+* Remove need for a custom metaclass. Formsets and forms now
+  show up in ``form.cleaned_data`` after validation in addition to the
+  ``SuperForm.forms`` and ``SuperForm.formsets`` attributes. `#19`_
 
 .. _#17: https://github.com/gregmuellegger/django-superform/pull/17
 .. _#18: https://github.com/gregmuellegger/django-superform/pull/18
+.. _#19: https://github.com/gregmuellegger/django-superform/pull/19
 
 0.3.1
 -----
