@@ -18,8 +18,8 @@ view is usually quite troublesome. You need to validate both the form and the
 formset manually and you cannot use django's generic FormView_. So here comes
 **django-superform** into play.
 
-.. _formsets: https://docs.djangoproject.com/en/1.6/topics/forms/formsets/
-.. _FormView: https://docs.djangoproject.com/en/1.6/ref/class-based-views/generic-editing/#formview
+.. _formsets: https://docs.djangoproject.com/en/1.10/topics/forms/formsets/
+.. _FormView: https://docs.djangoproject.com/en/1.10/ref/class-based-views/generic-editing/#formview
 
 Here we have an example for the usecase. Let's have a look at the
 ``forms.py``:
