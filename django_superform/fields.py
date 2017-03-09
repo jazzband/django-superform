@@ -90,8 +90,12 @@ class CompositeField(BaseCompositeField):
         """
         kwargs = {
             'prefix': self.get_prefix(form, name),
-            'initial': self.get_initial(form, name),
         }
+
+        initial = self.get_initial(form, name)
+        if initial is not None:
+            kwargs['initial'] = initial
+
         kwargs.update(self.default_kwargs)
         return kwargs
 
