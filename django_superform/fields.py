@@ -17,10 +17,11 @@ class BaseCompositeField(object):
     # order.
     creation_counter = 0
 
-    def __init__(self, required=True, widget=None, label=None, help_text='',
+    def __init__(self, required=True, widget=None, label=None, initial=None, help_text='',
                  localize=False, disabled=False):
         self.required = required
         self.label = label
+        self.initial = initial
         self.help_text = help_text
         self.disabled = disabled
 
