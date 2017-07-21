@@ -5,3 +5,8 @@
 /django_superform.egg-info/
 /.cache/
 /.coverage*
+
+/.idea
+/.settings
+/.project
+/.pydevproject
