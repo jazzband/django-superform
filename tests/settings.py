@@ -21,3 +21,11 @@ MIDDLEWARE_CLASSES = ()
 STATIC_URL = '/static/'
 
 SECRET_KEY = '0'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+    },
+]
