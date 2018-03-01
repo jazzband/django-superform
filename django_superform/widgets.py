@@ -22,7 +22,7 @@ class TemplateWidget(forms.Widget):
     def get_context_data(self):
         return {}
 
-    def get_context(self, name, value, attrs=None):
+    def get_context(self, name, value, attrs=None, **kwargs):
         context = {
             'name': name,
             'hidden': self.is_hidden,
