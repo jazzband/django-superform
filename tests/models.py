@@ -15,11 +15,13 @@ class Post(models.Model):
     """
 
     title = models.CharField(max_length=50)
-    series = models.ForeignKey('Series', null=True, blank=True)
+    series = models.ForeignKey('Series', null=True, blank=True,
+                               on_delete=models.CASCADE)
 
 
 class Image(models.Model):
-    post = models.ForeignKey('Post', related_name='images')
+    post = models.ForeignKey('Post', related_name='images',
+                             on_delete=models.CASCADE)
 
     name = models.CharField(max_length=50)
     position = models.PositiveIntegerField(default=0)
