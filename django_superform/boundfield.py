@@ -24,7 +24,8 @@ class CompositeBoundField(BoundField):
         for item in self.form.get_composite_field_value(self.name):
             yield item
 
-    # __len__, no changes required
+    def __len__(self):
+        return len(list(self.__iter__()))
 
     def __getitem__(self, item):
         """

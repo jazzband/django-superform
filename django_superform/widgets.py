@@ -1,3 +1,4 @@
+import django
 from django import forms
 from django.template import loader
 
@@ -23,6 +24,7 @@ class TemplateWidget(forms.Widget):
         return {}
 
     def get_context(self, name, value, attrs=None, **kwargs):
+        attrs = {} if attrs is None else attrs
         context = {
             'name': name,
             'hidden': self.is_hidden,
@@ -38,6 +40,12 @@ class TemplateWidget(forms.Widget):
 
         context.update(self.get_context_data())
         context['attrs'] = self.build_attrs(attrs)
+        if django.VERSION >= (1, 11):
+            # Once support for older versions is dropped, this class
+            # should be replaced with template widgets now that django
+            # supports this.
+            # See https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
+            context['widget'] = context
 
         return context
 
