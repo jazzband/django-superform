@@ -17,8 +17,15 @@ class BaseCompositeField(object):
     # order.
     creation_counter = 0
 
-    def __init__(self, required=True, widget=None, label=None, help_text='',
-                 localize=False, disabled=False):
+    def __init__(
+        self,
+        required=True,
+        widget=None,
+        label=None,
+        help_text="",
+        localize=False,
+        disabled=False,
+    ):
         self.required = required
         self.label = label
         self.help_text = help_text
@@ -52,7 +59,7 @@ class CompositeField(BaseCompositeField):
     This field cannot be used directly, use a subclass of it.
     """
 
-    prefix_name = 'composite'
+    prefix_name = "composite"
 
     def __init__(self, *args, **kwargs):
         super(CompositeField, self).__init__(*args, **kwargs)
@@ -68,10 +75,11 @@ class CompositeField(BaseCompositeField):
         """
         Return the prefix that is used for the formset.
         """
-        return '{form_prefix}{prefix_name}-{field_name}'.format(
-            form_prefix=form.prefix + '-' if form.prefix else '',
+        return "{form_prefix}{prefix_name}-{field_name}".format(
+            form_prefix=form.prefix + "-" if form.prefix else "",
             prefix_name=self.prefix_name,
-            field_name=name)
+            field_name=name,
+        )
 
     def get_initial(self, form, name):
         """
@@ -80,7 +88,7 @@ class CompositeField(BaseCompositeField):
         given.
         """
 
-        if hasattr(form, 'initial'):
+        if hasattr(form, "initial"):
             return form.initial.get(name, None)
         return None
 
@@ -89,8 +97,8 @@ class CompositeField(BaseCompositeField):
         Return the keyword arguments that are used to instantiate the formset.
         """
         kwargs = {
-            'prefix': self.get_prefix(form, name),
-            'initial': self.get_initial(form, name),
+            "prefix": self.get_prefix(form, name),
+            "initial": self.get_initial(form, name),
         }
         kwargs.update(self.default_kwargs)
         return kwargs
@@ -148,7 +156,7 @@ class FormField(CompositeField):
     The first method (using ``kwargs``) will take precedence.
     """
 
-    prefix_name = 'form'
+    prefix_name = "form"
     widget = FormWidget
 
     def __init__(self, form_class, kwargs=None, **field_kwargs):
@@ -176,7 +184,8 @@ class FormField(CompositeField):
         composite_form = form_class(
             data=form.data if form.is_bound else None,
             files=form.files if form.is_bound else None,
-            **kwargs)
+            **kwargs
+        )
         return composite_form
 
 
@@ -246,8 +255,8 @@ class ModelFormField(FormField):
         """
         kwargs = super(ModelFormField, self).get_kwargs(form, name)
         instance = self.get_instance(form, name)
-        kwargs.setdefault('instance', instance)
-        kwargs.setdefault('empty_permitted', not self.required)
+        kwargs.setdefault("instance", instance)
+        kwargs.setdefault("empty_permitted", not self.required)
         return kwargs
 
     def shall_save(self, form, name, composite_form):
@@ -279,20 +288,20 @@ class ModelFormField(FormField):
 
 
 class ForeignKeyFormField(ModelFormField):
-    def __init__(self, form_class, kwargs=None, field_name=None, blank=None,
-                 **field_kwargs):
-        super(ForeignKeyFormField, self).__init__(form_class, kwargs,
-                                                  **field_kwargs)
+    def __init__(
+        self, form_class, kwargs=None, field_name=None, blank=None, **field_kwargs
+    ):
+        super(ForeignKeyFormField, self).__init__(form_class, kwargs, **field_kwargs)
         self.field_name = field_name
         self.blank = blank
 
     def get_kwargs(self, form, name):
         kwargs = super(ForeignKeyFormField, self).get_kwargs(form, name)
-        if 'instance' not in kwargs:
-            kwargs.setdefault('instance', self.get_instance(form, name))
-        if 'empty_permitted' not in kwargs:
+        if "instance" not in kwargs:
+            kwargs.setdefault("instance", self.get_instance(form, name))
+        if "empty_permitted" not in kwargs:
             if self.allow_blank(form, name):
-                kwargs['empty_permitted'] = True
+                kwargs["empty_permitted"] = True
         return kwargs
 
     def get_field_name(self, form, name):
@@ -323,16 +332,17 @@ class ForeignKeyFormField(ModelFormField):
         if composite_form.empty_permitted and not composite_form.has_changed():
             saved_obj = composite_form.instance
         else:
-            saved_obj = super(ForeignKeyFormField, self).save(form, name,
-                                                              composite_form,
-                                                              commit)
+            saved_obj = super(ForeignKeyFormField, self).save(
+                form, name, composite_form, commit
+            )
         setattr(form.instance, self.get_field_name(form, name), saved_obj)
         if commit:
             form.instance.save()
         else:
             raise NotImplementedError(
-                'ForeignKeyFormField cannot yet be used with non-commiting '
-                'form saves.')
+                "ForeignKeyFormField cannot yet be used with non-commiting "
+                "form saves."
+            )
         return saved_obj
 
 
@@ -345,7 +355,7 @@ class FormSetField(CompositeField):
     are used when the ``formset_class`` is instantiated.
     """
 
-    prefix_name = 'formset'
+    prefix_name = "formset"
     widget = FormSetWidget
 
     def __init__(self, formset_class, kwargs=None, **field_kwargs):
@@ -373,7 +383,8 @@ class FormSetField(CompositeField):
         formset = formset_class(
             form.data if form.is_bound else None,
             form.files if form.is_bound else None,
-            **kwargs)
+            **kwargs
+        )
         return formset
 
 
@@ -434,8 +445,14 @@ class InlineFormSetField(ModelFormSetField):
                 extra=1)
     """
 
-    def __init__(self, parent_model=None, model=None, formset_class=None,
-                 kwargs=None, **factory_kwargs):
+    def __init__(
+        self,
+        parent_model=None,
+        model=None,
+        formset_class=None,
+        kwargs=None,
+        **factory_kwargs
+    ):
         """
         You need to either provide the ``formset_class`` or the ``model``
         argument.
@@ -448,25 +465,27 @@ class InlineFormSetField(ModelFormSetField):
         # Make sure that all standard arguments will get passed through to the
         # parent's __init__ method.
         field_kwargs = {}
-        for arg in ['required', 'widget', 'label', 'help_text', 'localize']:
+        for arg in ["required", "widget", "label", "help_text", "localize"]:
             if arg in factory_kwargs:
                 field_kwargs[arg] = factory_kwargs.pop(arg)
 
         self.parent_model = parent_model
         self.model = model
         self.formset_factory_kwargs = factory_kwargs
-        super(InlineFormSetField, self).__init__(formset_class, kwargs=kwargs,
-                                                 **field_kwargs)
+        super(InlineFormSetField, self).__init__(
+            formset_class, kwargs=kwargs, **field_kwargs
+        )
         if (
-                self.formset_class is None and
-                'form' not in self.formset_factory_kwargs and
-                'fields' not in self.formset_factory_kwargs and
-                'exclude' not in self.formset_factory_kwargs):
+            self.formset_class is None
+            and "form" not in self.formset_factory_kwargs
+            and "fields" not in self.formset_factory_kwargs
+            and "exclude" not in self.formset_factory_kwargs
+        ):
             raise ValueError(
-                'You need to either specify the `formset_class` argument or '
-                'one of `form`/`fields`/`exclude` arguments '
-                'when creating a {0}.'
-                .format(self.__class__.__name__))
+                "You need to either specify the `formset_class` argument or "
+                "one of `form`/`fields`/`exclude` arguments "
+                "when creating a {0}.".format(self.__class__.__name__)
+            )
 
     def get_model(self, form, name):
         return self.model
@@ -487,10 +506,11 @@ class InlineFormSetField(ModelFormSetField):
         formset_class = inlineformset_factory(
             self.get_parent_model(form, name),
             self.get_model(form, name),
-            **self.formset_factory_kwargs)
+            **self.formset_factory_kwargs
+        )
         return formset_class
 
     def get_kwargs(self, form, name):
         kwargs = super(InlineFormSetField, self).get_kwargs(form, name)
-        kwargs.setdefault('instance', form.instance)
+        kwargs.setdefault("instance", form.instance)
         return kwargs
