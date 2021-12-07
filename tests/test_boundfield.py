@@ -30,20 +30,29 @@ class AccountForm(SuperForm):
 
 
 class CompositeBoundFieldTests(TestCase):
-    def test_it_is_nonzero_for_empty_formsets(self):
+    def test_it_is_zero_for_empty_formsets(self):
         form = AccountForm()
         bf = form['emails']
         self.assertTrue(isinstance(bf, CompositeBoundField))
         self.assertEqual(len(bf), 0)
         self.assertEqual(bool(bf), True)
 
-    def test_it_is_nonzero_for_filled_formsets(self):
+    def test_it_is_one_for_filled_one_formsets(self):
         form = AccountForm(initial={
             'emails': [{'email': 'admin@example.com'}]
         })
         bf = form['emails']
         self.assertTrue(isinstance(bf, CompositeBoundField))
         self.assertEqual(len(bf), 1)
+        self.assertEqual(bool(bf), True)
+
+    def test_it_is_two_for_filled_two_formsets(self):
+        form = AccountForm(initial={
+            'emails': [{'email': 'admin@example.com'},{'sec_email': 'admin@example123.com'}]
+        })
+        bf = form['emails']
+        self.assertTrue(isinstance(bf, CompositeBoundField))
+        self.assertEqual(len(bf), 2)
         self.assertEqual(bool(bf), True)
 
     def test_it_is_nonzero_for_forms(self):
