@@ -1,7 +1,7 @@
 import django
 from django import forms
-from django.forms.forms import ErrorDict, ErrorList
 from django.forms.formsets import formset_factory
+from django.forms.utils import ErrorDict, ErrorList
 from django.test import TestCase
 from django_superform import FormField
 from django_superform import FormSetField

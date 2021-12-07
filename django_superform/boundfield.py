@@ -1,3 +1,4 @@
+import datetime
 from django.forms.boundfield import BoundField
 
 
@@ -118,3 +119,27 @@ class CompositeBoundField(BoundField):
     # label_tag, no changes required
     # auto_id, no changes required
     # id_for_label, no changes required
+    
+    @property
+    def initial(self):
+        data = self.get_initial_for_field(self.field, self.name)
+        # If this is an auto-generated default date, nix the microseconds for
+        # standardized handling. See #22502.
+        if (isinstance(data, (datetime.datetime, datetime.time)) and
+                not self.field.widget.supports_microseconds):
+            data = data.replace(microsecond=0)
+        return data
+
+    def get_initial_for_field(self, field, field_name):
+        """
+        Return initial data for field on form. Use initial data from the form
+        or the field, in that order. Evaluate callable values.
+        """
+        # return {'series': {'title': 'my title'}}
+        value = field.get_initial(self.form, field_name)
+        if callable(value):
+            value = value()
+        return value
+
+    def __len__(self):
+        return len(self.subwidgets[0].data["formset"])

@@ -77,8 +77,9 @@ You're welcome.
 
 from functools import reduce
 from django import forms
-from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
+from django.forms.forms import DeclarativeFieldsMetaclass
 from django.forms.models import ModelFormMetaclass
+from django.forms.utils import ErrorDict, ErrorList
 import copy
 
 from .fields import CompositeField
