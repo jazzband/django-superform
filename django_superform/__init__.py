@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-     ____   _                 _____                 _____
-    |    \ |_|___ ___ ___ ___|   __|_ _ ___ ___ ___|   __|___ ___ _____
-    |  |  || | .'|   | . | . |__   | | | . | -_|  _|   __| . |  _|     |
-    |____/_| |__,|_|_|_  |___|_____|___|  _|___|_| |__|  |___|_| |_|_|_|
-         |___|       |___|             |_|
-
-
 Author: Gregor Müllegger <gregor@muellegger.de>
 Project home: https://github.com/gregmuellegger/django-superform
 See http://django-superform.readthedocs.org/en/latest/ for complete docs.

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+lint() {
+    black --check .
+    isort --diff .
+    flake8 .
+    mypy .
+}
+
+"$@"
