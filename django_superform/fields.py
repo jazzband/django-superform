@@ -1,7 +1,8 @@
 from django.forms.models import inlineformset_factory
 
 from .boundfield import CompositeBoundField
-from .widgets import FormWidget, FormSetWidget
+from .widgets import TemplateWidget, FormWidget, FormSetWidget
+from typing import Optional, Type
 
 
 class BaseCompositeField(object):
@@ -10,7 +11,7 @@ class BaseCompositeField(object):
     with the ``django.forms.Field`` class.
     """
 
-    widget = None
+    widget: Optional[Type[TemplateWidget]] = None
     show_hidden_initial = False
 
     # Tracks each time a FormSetField instance is created. Used to retain
@@ -60,6 +61,7 @@ class CompositeField(BaseCompositeField):
     """
 
     prefix_name = "composite"
+    widget: Optional[Type[TemplateWidget]] = None
 
     def __init__(self, *args, **kwargs):
         super(CompositeField, self).__init__(*args, **kwargs)
@@ -477,10 +479,10 @@ class InlineFormSetField(ModelFormSetField):
             formset_class, kwargs=kwargs, **field_kwargs
         )
         if (
-            self.formset_class is None
-            and "form" not in self.formset_factory_kwargs
-            and "fields" not in self.formset_factory_kwargs
-            and "exclude" not in self.formset_factory_kwargs
+            self.formset_class is None and
+            "form" not in self.formset_factory_kwargs and
+            "fields" not in self.formset_factory_kwargs and
+            "exclude" not in self.formset_factory_kwargs
         ):
             raise ValueError(
                 "You need to either specify the `formset_class` argument or "

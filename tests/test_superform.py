@@ -34,9 +34,14 @@ class SuperFormTests(TestCase):
         self.assertEqual(list(AccountForm.base_fields.keys()), ['username'])
 
         self.assertTrue(hasattr(AccountForm, 'base_composite_fields'))
-        self.assertEqual(list(AccountForm.base_composite_fields.keys()), ['emails', 'nested_form'])
+        self.assertEqual(
+            list(AccountForm.base_composite_fields.keys()), ['emails', 'nested_form']
+        )
         self.assertTrue(hasattr(SubclassedAccountForm, 'base_composite_fields'))
-        self.assertEqual(list(SubclassedAccountForm.base_composite_fields.keys()), ['emails', 'nested_form', 'nested_form_2'])
+        self.assertEqual(
+            list(SubclassedAccountForm.base_composite_fields.keys()),
+            ['emails', 'nested_form', 'nested_form_2']
+            )
 
         field = AccountForm.base_composite_fields['emails']
         self.assertIsInstance(field, FormSetField)

@@ -3,7 +3,7 @@ from django.template import Context, Template
 from django.test import TestCase
 from django_superform import SuperModelForm, ModelFormField
 
-from .models import Series, Post, Image
+from .models import Series, Post
 
 
 class UseFirstModelFormField(ModelFormField):

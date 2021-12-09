@@ -48,7 +48,10 @@ class CompositeBoundFieldTests(TestCase):
 
     def test_it_is_two_for_filled_two_formsets(self):
         form = AccountForm(initial={
-            'emails': [{'email': 'admin@example.com'},{'sec_email': 'admin@example123.com'}]
+            'emails': [
+                {'email': 'admin@example.com'},
+                {'sec_email': 'admin@example123.com'}
+            ]
         })
         bf = form['emails']
         self.assertTrue(isinstance(bf, CompositeBoundField))

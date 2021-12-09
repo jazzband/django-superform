@@ -119,7 +119,7 @@ class CompositeBoundField(BoundField):
     # label_tag, no changes required
     # auto_id, no changes required
     # id_for_label, no changes required
-    
+
     @property
     def initial(self):
         data = self.get_initial_for_field(self.field, self.name)

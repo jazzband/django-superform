@@ -1,5 +1,6 @@
 from django import forms
 from django.template import loader
+from typing import Optional
 
 
 class TemplateWidget(forms.Widget):
@@ -10,8 +11,8 @@ class TemplateWidget(forms.Widget):
     """
 
     field = None
-    template_name = None
-    value_context_name = None
+    template_name: Optional[str] = None
+    value_context_name: Optional[str] = None
 
     def __init__(self, *args, **kwargs):
         template_name = kwargs.pop("template_name", None)
