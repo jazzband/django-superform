@@ -135,7 +135,6 @@ class CompositeBoundField(BoundField):
         Return initial data for field on form. Use initial data from the form
         or the field, in that order. Evaluate callable values.
         """
-        # return {'series': {'title': 'my title'}}
         value = field.get_initial(self.form, field_name)
         if callable(value):
             value = value()

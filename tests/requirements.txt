@@ -1,6 +1,6 @@
 tox>=3.24
 flake8==4.0.1
-black
+black==21.12b0
 mypy==0.910
 pytest>=6.2
 pytest-django>=4.2
