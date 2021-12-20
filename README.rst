@@ -3,7 +3,7 @@ django-superform
 
 **Less sucking formsets.**
 
-|build| |package| |gitter|
+|build| |package|
 
 Documentation_ | Changelog_ | Requirements_ | Installation_
 
