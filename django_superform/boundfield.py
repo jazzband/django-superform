@@ -125,8 +125,10 @@ class CompositeBoundField(BoundField):
         data = self.get_initial_for_field(self.field, self.name)
         # If this is an auto-generated default date, nix the microseconds for
         # standardized handling. See #22502.
-        if (isinstance(data, (datetime.datetime, datetime.time)) and
-                not self.field.widget.supports_microseconds):
+        if (
+            isinstance(data, (datetime.datetime, datetime.time))
+            and not self.field.widget.supports_microseconds
+        ):
             data = data.replace(microsecond=0)
         return data
 
