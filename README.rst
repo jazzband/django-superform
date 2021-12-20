@@ -97,8 +97,8 @@ And it just works.
 Requirements
 ------------
 
-- Python 2.7 or Python 3.3+ or PyPy
-- Django 1.4+
+- Python 3.6+
+- Django 2.2+
 
 .. _Installation:
 
@@ -126,7 +126,7 @@ Development
 
 - Clone django-superform::
 
-    git clone git@github.com:gregmuellegger/django-superform.git
+    git clone git@github.com:wsp-digital/django-superform.git
 
 - ``cd`` into the repository::
 
@@ -163,7 +163,3 @@ Full documentation is available on Read the Docs: https://django-superform.readt
     :alt: Package Version
     :scale: 100%
     :target: http://badge.fury.io/py/django-superform
-.. |gitter| image:: https://badges.gitter.im/JoinChat.svg
-    :alt: Gitter Chat, discuss django-superform with others
-    :scale: 100%
-    :target: https://gitter.im/gregmuellegger/django-superform
