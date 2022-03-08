@@ -25,7 +25,7 @@ class PostForm(SuperModelForm):
 class TestFormSetField(TestCase):
     def test_inline_formset_field(self):
         post = Post.objects.create()
-        _ = [post.images.create(name="image1"), post.images.create(name="image2")]
+        post.images.create(name="image1"), post.images.create(name="image2")
         form = PostForm(instance=post)
         t = Template("{{ form.images_inlineformset }}")
         c = Context({"form": form})
@@ -34,7 +34,7 @@ class TestFormSetField(TestCase):
 
     def test_model_formset_field(self):
         post = Post.objects.create()
-        _ = [post.images.create(name="image1"), post.images.create(name="image2")]
+        post.images.create(name="image1"), post.images.create(name="image2")
         form = PostForm(instance=post)
         t = Template("{{ form.images_modelformset }}")
         c = Context({"form": form})
