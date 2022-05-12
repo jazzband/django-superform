@@ -1,14 +1,14 @@
 EXPECTED_EXPORTS = (
-    'ForeignKeyFormField',
-    'FormField',
-    'FormSetField',
-    'FormSetWidget',
-    'FormWidget',
-    'InlineFormSetField',
-    'ModelFormField',
-    'ModelFormSetField',
-    'SuperForm',
-    'SuperModelForm',
+    "ForeignKeyFormField",
+    "FormField",
+    "FormSetField",
+    "FormSetWidget",
+    "FormWidget",
+    "InlineFormSetField",
+    "ModelFormField",
+    "ModelFormSetField",
+    "SuperForm",
+    "SuperModelForm",
 )
 
 

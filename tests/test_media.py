@@ -9,7 +9,7 @@ class InputWithCSS(forms.TextInput):
 
     class Media(object):
         css = {
-            'all': ['http://example.com/email_widget_style.css'],
+            "all": ["http://example.com/email_widget_style.css"],
         }
 
 
@@ -17,7 +17,7 @@ class InputWithJS(forms.TextInput):
     """Another test widget with media directives."""
 
     class Media(object):
-        js = ['http://example.com/check_username_available.js']
+        js = ["http://example.com/check_username_available.js"]
 
 
 class EmailForm(forms.Form):
@@ -33,10 +33,10 @@ class FormWithNestedMedia(SuperForm):
 
     class Media(object):
         css = {
-            'all': ['/static/all.css'],
-            'print': ['/static/print.css'],
+            "all": ["/static/all.css"],
+            "print": ["/static/print.css"],
         }
-        js = ['/static/1.js']
+        js = ["/static/1.js"]
 
 
 class FormMediaTests(TestCase):
@@ -45,15 +45,15 @@ class FormMediaTests(TestCase):
         form = FormWithNestedMedia()
 
         expected_css = {
-            'all': [
-                'http://example.com/email_widget_style.css',
-                '/static/all.css',
+            "all": [
+                "http://example.com/email_widget_style.css",
+                "/static/all.css",
             ],
-            'print': ['/static/print.css'],
+            "print": ["/static/print.css"],
         }
         expected_js = [
-            'http://example.com/check_username_available.js',
-            '/static/1.js',
+            "http://example.com/check_username_available.js",
+            "/static/1.js",
         ]
 
         self.assertEqual(form.media._css, expected_css)
