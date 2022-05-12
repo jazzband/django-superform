@@ -1,7 +1,8 @@
 from django.forms.models import inlineformset_factory
 
 from .boundfield import CompositeBoundField
-from .widgets import FormWidget, FormSetWidget
+from .widgets import TemplateWidget, FormWidget, FormSetWidget
+from typing import Optional, Type
 
 
 class BaseCompositeField(object):
@@ -10,7 +11,7 @@ class BaseCompositeField(object):
     with the ``django.forms.Field`` class.
     """
 
-    widget = None
+    widget: Optional[Type[TemplateWidget]] = None
     show_hidden_initial = False
 
     # Tracks each time a FormSetField instance is created. Used to retain
@@ -60,6 +61,7 @@ class CompositeField(BaseCompositeField):
     """
 
     prefix_name = "composite"
+    widget: Optional[Type[TemplateWidget]] = None
 
     def __init__(self, *args, **kwargs):
         super(CompositeField, self).__init__(*args, **kwargs)
@@ -257,6 +259,7 @@ class ModelFormField(FormField):
         instance = self.get_instance(form, name)
         kwargs.setdefault("instance", instance)
         kwargs.setdefault("empty_permitted", not self.required)
+        kwargs.setdefault("use_required_attribute", self.required)
         return kwargs
 
     def shall_save(self, form, name, composite_form):

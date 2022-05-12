@@ -1,0 +1,26 @@
+name: tests
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: lukewiwa/pythons:latest
+    env:
+      POETRY_VIRTUALENVS_CREATE: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: install libmagic
+        run: apt-get update && apt-get install --no-install-recommends -y libmagic-dev
+      - name: install sqlite3
+        run: apt update && apt install -y sqlite3
+      - name: default python install
+        run: ln -sf /usr/local/bin/python3.6 /usr/local/bin/python && ln -sf /usr/local/bin/pip3.6 /usr/local/bin/pip
+      - name: install django
+        run: python -m pip install -r requirements.txt
+      - name: lint
+        run: make lint
+      - name: tox
+        if: ${{ success() }}
+        run: tox
+        

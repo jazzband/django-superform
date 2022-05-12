@@ -1,5 +1,6 @@
 from django import forms
 from django.template import loader
+from typing import Optional
 
 
 class TemplateWidget(forms.Widget):
@@ -10,8 +11,8 @@ class TemplateWidget(forms.Widget):
     """
 
     field = None
-    template_name = None
-    value_context_name = None
+    template_name: Optional[str] = None
+    value_context_name: Optional[str] = None
 
     def __init__(self, *args, **kwargs):
         template_name = kwargs.pop("template_name", None)
@@ -38,7 +39,8 @@ class TemplateWidget(forms.Widget):
             context["hidden"] = True
 
         context.update(self.get_context_data())
-        context["attrs"] = self.build_attrs(attrs)
+        if attrs:
+            context["attrs"] = self.build_attrs(attrs)
 
         return context
 
@@ -46,10 +48,14 @@ class TemplateWidget(forms.Widget):
         template_name = kwargs.pop("template_name", None)
         if template_name is None:
             template_name = self.template_name
-        context = self.get_context(name, value, attrs=attrs or {}, **kwargs)
+        context = self.get_context(name, value, attrs=attrs or {})
         return loader.render_to_string(
-            template_name, dictionary=context, context_instance=self.context_instance
+            template_name, context=context, using=self.context_instance
         )
+
+    def subwidgets(self, name, value, attrs=None):
+        context = self.get_context(name, value, attrs)
+        yield context
 
 
 class FormWidget(TemplateWidget):
