@@ -79,7 +79,7 @@ from functools import reduce
 from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
 from django.forms.models import ModelFormMetaclass
-from django.utils import six
+import six
 import copy
 
 from .fields import CompositeField
