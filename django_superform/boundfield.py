@@ -1,4 +1,4 @@
-from django.forms.forms import BoundField
+from django.forms import BoundField
 
 
 class CompositeBoundField(BoundField):
