@@ -79,7 +79,6 @@ from functools import reduce
 from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass, ErrorDict, ErrorList
 from django.forms.models import ModelFormMetaclass
-from django.utils import six
 import copy
 
 from .fields import CompositeField
@@ -156,10 +155,10 @@ class SuperFormMixin(object):
         from django_superform import SuperFormMetaclass
         import six
 
-        class MySuperForm(six.with_metaclass(
-                SuperFormMetaclass,
+        class MySuperForm(
                 SuperFormMixin,
-                MyCustomForm)):
+                MyCustomForm,
+                metaclass=SuperFormMetaclass):
             pass
 
     The goal of a superform is to behave just like a normal django form but is
@@ -372,8 +371,7 @@ class SuperModelFormMixin(SuperFormMixin):
         self._extend_save_m2m('save_formsets_m2m', saved_composites)
 
 
-class SuperModelForm(six.with_metaclass(SuperModelFormMetaclass,
-                                        SuperModelFormMixin, forms.ModelForm)):
+class SuperModelForm(SuperModelFormMixin, forms.ModelForm, metaclass=SuperModelFormMetaclass):
     """
     The ``SuperModelForm`` works like a Django ``ModelForm`` but has the
     capabilities of nesting like :class:`~django_superform.forms.SuperForm`.
@@ -382,8 +380,7 @@ class SuperModelForm(six.with_metaclass(SuperModelFormMetaclass,
     """
 
 
-class SuperForm(six.with_metaclass(SuperFormMetaclass,
-                                   SuperFormMixin, forms.Form)):
+class SuperForm(SuperFormMixin, forms.Form, metaclass=SuperFormMetaclass):
     """
     The base class for all super forms. The goal of a superform is to behave
     just like a normal django form but is able to take composite fields, like

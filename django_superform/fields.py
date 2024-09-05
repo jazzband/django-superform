@@ -151,9 +151,10 @@ class FormField(CompositeField):
     prefix_name = 'form'
     widget = FormWidget
 
-    def __init__(self, form_class, kwargs=None, **field_kwargs):
+    def __init__(self, form_class, kwargs=None, initial=None, **field_kwargs):
         super(FormField, self).__init__(**field_kwargs)
 
+        self.initial = initial
         self.form_class = form_class
         if kwargs is None:
             kwargs = {}
@@ -172,6 +173,7 @@ class FormField(CompositeField):
         Get an instance of the form.
         """
         kwargs = self.get_kwargs(form, name)
+        kwargs.update({'use_required_attribute': False if kwargs.get('empty_permitted', False) is True else True})
         form_class = self.get_form_class(form, name)
         composite_form = form_class(
             data=form.data if form.is_bound else None,
@@ -279,7 +281,7 @@ class ModelFormField(FormField):
 
 
 class ForeignKeyFormField(ModelFormField):
-    def __init__(self, form_class, kwargs=None, field_name=None, blank=None,
+    def __init__(self, form_class, initial=None, kwargs=None, field_name=None, blank=None,
                  **field_kwargs):
         super(ForeignKeyFormField, self).__init__(form_class, kwargs,
                                                   **field_kwargs)
@@ -348,9 +350,10 @@ class FormSetField(CompositeField):
     prefix_name = 'formset'
     widget = FormSetWidget
 
-    def __init__(self, formset_class, kwargs=None, **field_kwargs):
+    def __init__(self, formset_class, initial=None, kwargs=None, **field_kwargs):
         super(FormSetField, self).__init__(**field_kwargs)
 
+        self.initial = initial
         self.formset_class = formset_class
         if kwargs is None:
             kwargs = {}
@@ -434,7 +437,7 @@ class InlineFormSetField(ModelFormSetField):
                 extra=1)
     """
 
-    def __init__(self, parent_model=None, model=None, formset_class=None,
+    def __init__(self, initial=None, parent_model=None, model=None, formset_class=None,
                  kwargs=None, **factory_kwargs):
         """
         You need to either provide the ``formset_class`` or the ``model``

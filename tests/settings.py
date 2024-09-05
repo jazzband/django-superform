@@ -9,7 +9,6 @@ DATABASES = {
 }
 
 USE_I18N = True
-USE_L10N = True
 
 INSTALLED_APPS = [
     'django_superform',
@@ -21,3 +20,13 @@ MIDDLEWARE_CLASSES = ()
 STATIC_URL = '/static/'
 
 SECRET_KEY = '0'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['tests/templates', 'django-superform/templates'],
+        'APP_DIRS': True
+    }
+]
+
+USE_TZ = False

@@ -14,7 +14,7 @@ class PostForm(SuperModelForm):
         model = Post
         fields = ['title']
 
-    images_inlineformset = InlineFormSetField(Post, Image, fields=['name'])
+    images_inlineformset = InlineFormSetField(parent_model=Post, model=Image, fields=['name'])
     images_modelformset = ModelFormSetField(ImageFormSet)
 
     def __init__(self, *args, **kwargs):

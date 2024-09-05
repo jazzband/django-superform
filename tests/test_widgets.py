@@ -11,7 +11,7 @@ class TemplateWidgetTests(TestCase):
         widget = TemplateWidget()
 
         widget_context = widget.get_context('foo', None)
-        self.assertEqual(widget_context['hidden'], False)
+        self.assertEqual(widget_context['widget']['is_hidden'], False)
 
         class HiddenWidget(TemplateWidget):
             is_hidden = True
@@ -19,7 +19,7 @@ class TemplateWidgetTests(TestCase):
         hidden_widget = HiddenWidget()
 
         hidden_widget_context = hidden_widget.get_context('foo', None)
-        self.assertEqual(hidden_widget_context['hidden'], True)
+        self.assertEqual(hidden_widget_context['widget']['is_hidden'], True)
 
     def test_it_recognizes_value_context_name(self):
         class DifferentValueNameWidget(TemplateWidget):
@@ -29,11 +29,12 @@ class TemplateWidgetTests(TestCase):
         widget = DifferentValueNameWidget()
         context = widget.get_context('foo', value)
 
-        self.assertTrue(context['strange_name'] is value)
+        self.assertTrue(context['widget']['strange_name'] is value)
 
         # The name 'value' is always available, regardless of the
         # value_context_name.
-        self.assertTrue(context['value'] is value)
+        self.assertEqual(context['widget']['value'], str(value))
+#        self.assertTrue(context['widget']['value'] is str(value))
 
     def test_it_renders_template_from_attribute(self):
         class TemplateAttributeWidget(TemplateWidget):

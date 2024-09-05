@@ -24,33 +24,23 @@ class TemplateWidget(forms.Widget):
         return {}
 
     def get_context(self, name, value, attrs=None):
-        context = {
-            'name': name,
-            'hidden': self.is_hidden,
-            'required': self.is_required,
-            # In our case ``value`` is the form or formset instance.
-            'value': value,
-        }
+        context = super().get_context(name, value, attrs)
         if self.value_context_name:
-            context[self.value_context_name] = value
-
-        if self.is_hidden:
-            context['hidden'] = True
+            context['widget'][self.value_context_name] = value
 
         context.update(self.get_context_data())
-        context['attrs'] = self.build_attrs(attrs)
 
         return context
 
-    def render(self, name, value, attrs=None, **kwargs):
+    def render(self, name, value, attrs=None, renderer=None, **kwargs):
         template_name = kwargs.pop('template_name', None)
         if template_name is None:
             template_name = self.template_name
         context = self.get_context(name, value, attrs=attrs or {}, **kwargs)
         return loader.render_to_string(
             template_name,
-            dictionary=context,
-            context_instance=self.context_instance)
+            context=context['widget'],
+        )
 
 
 class FormWidget(TemplateWidget):
