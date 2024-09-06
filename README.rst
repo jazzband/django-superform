@@ -3,8 +3,6 @@ django-superform
 
 **Less sucking formsets.**
 
-|build| |package|
-
 Documentation_ | Changelog_ | Requirements_ | Installation_
 
 A ``SuperForm`` is absolutely super if you want to nest a lot of forms in each
@@ -181,11 +179,3 @@ Full documentation is available on Read the Docs: https://django-superform.readt
 .. _Changelog: https://django-superform.readthedocs.org/en/latest/changelog.html
 .. _Documentation: https://django-superform.readthedocs.org/
 
-.. |build| image:: https://travis-ci.org/gregmuellegger/django-superform.svg?branch=master
-    :alt: Build Status
-    :scale: 100%
-    :target: https://travis-ci.org/gregmuellegger/django-superform
-.. |package| image:: https://badge.fury.io/py/django-superform.svg
-    :alt: Package Version
-    :scale: 100%
-    :target: http://badge.fury.io/py/django-superform
