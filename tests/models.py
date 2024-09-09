@@ -15,11 +15,11 @@ class Post(models.Model):
     """
 
     title = models.CharField(max_length=50)
-    series = models.ForeignKey('Series', null=True, blank=True)
+    series = models.ForeignKey("Series", null=True, blank=True)
 
 
 class Image(models.Model):
-    post = models.ForeignKey('Post', related_name='images')
+    post = models.ForeignKey("Post", related_name="images")
 
     name = models.CharField(max_length=50)
     position = models.PositiveIntegerField(default=0)
@@ -28,4 +28,4 @@ class Image(models.Model):
     image_url = models.URLField()
 
     class Meta:
-        ordering = ('position',)
+        ordering = ("position",)
