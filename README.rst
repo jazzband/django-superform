@@ -164,4 +164,3 @@ Full documentation is available on Read the Docs: https://django-superform.readt
 .. |jazzband| image:: https://jazzband.co/static/img/badge.svg
     :target: https://jazzband.co
     :alt: Jazzband
-
