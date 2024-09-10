@@ -3,7 +3,7 @@ name: Python package
 on:
   push:
     branches: [ $default-branch ]
-  pull_requrest:
+  pull_request:
     branches: '**'
 
 jobs:
