@@ -3,7 +3,7 @@ django-superform
 
 **Less sucking formsets.**
 
-|build| |package| |gitter|
+|build| |package| |jazzband|
 
 Documentation_ | Changelog_ | Requirements_ | Installation_
 
@@ -126,7 +126,7 @@ Development
 
 - Clone django-superform::
 
-    git clone git@github.com:gregmuellegger/django-superform.git
+    git clone git@github.com:jazzband/django-superform.git
 
 - ``cd`` into the repository::
 
@@ -157,13 +157,10 @@ Full documentation is available on Read the Docs: https://django-superform.readt
 
 .. |build| image:: https://travis-ci.org/gregmuellegger/django-superform.svg?branch=master
     :alt: Build Status
-    :scale: 100%
     :target: https://travis-ci.org/gregmuellegger/django-superform
 .. |package| image:: https://badge.fury.io/py/django-superform.svg
     :alt: Package Version
-    :scale: 100%
     :target: http://badge.fury.io/py/django-superform
-.. |gitter| image:: https://badges.gitter.im/JoinChat.svg
-    :alt: Gitter Chat, discuss django-superform with others
-    :scale: 100%
-    :target: https://gitter.im/gregmuellegger/django-superform
+.. |jazzband| image:: https://jazzband.co/static/img/badge.svg
+    :target: https://jazzband.co
+    :alt: Jazzband

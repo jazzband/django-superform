@@ -3,7 +3,7 @@ from django.template import Context, Template
 from django.test import TestCase
 from django_superform import SuperModelForm, ModelFormField
 
-from .models import Series, Post, Image
+from .models import Series, Post
 
 
 class UseFirstModelFormField(ModelFormField):
@@ -17,7 +17,7 @@ class UseFirstModelFormField(ModelFormField):
 class SeriesForm(forms.ModelForm):
     class Meta:
         model = Series
-        fields = ('title',)
+        fields = ("title",)
 
 
 class PostForm(SuperModelForm):
@@ -25,7 +25,7 @@ class PostForm(SuperModelForm):
 
     class Meta:
         model = Post
-        fields = ('title',)
+        fields = ("title",)
 
 
 class UnrequiredSeriesPostForm(SuperModelForm):
@@ -33,7 +33,7 @@ class UnrequiredSeriesPostForm(SuperModelForm):
 
     class Meta:
         model = Post
-        fields = ('title',)
+        fields = ("title",)
 
 
 class UseExistingSeriesPostForm(SuperModelForm):
@@ -41,39 +41,41 @@ class UseExistingSeriesPostForm(SuperModelForm):
 
     class Meta:
         model = Post
-        fields = ('title',)
+        fields = ("title",)
 
 
 class FormFieldTests(TestCase):
     def test_is_in_composite_fields(self):
         superform = PostForm()
-        self.assertTrue('series' in superform.composite_fields)
+        self.assertTrue("series" in superform.composite_fields)
 
     def test_is_in_forms_attr(self):
         superform = PostForm()
-        self.assertTrue('series' in superform.forms)
-        self.assertTrue(isinstance(superform.forms['series'], SeriesForm))
+        self.assertTrue("series" in superform.forms)
+        self.assertTrue(isinstance(superform.forms["series"], SeriesForm))
 
     def test_form_prefix(self):
         superform = PostForm()
-        form = superform.forms['series']
-        self.assertEqual(form.prefix, 'form-series')
+        form = superform.forms["series"]
+        self.assertEqual(form.prefix, "form-series")
 
     def test_form_save(self):
-        superform = PostForm({
-            'title': 'New blog post',
-            'form-series-title': 'Unrelated series',
-        })
+        superform = PostForm(
+            {
+                "title": "New blog post",
+                "form-series-title": "Unrelated series",
+            }
+        )
         superform.save()
 
         self.assertEqual(Series.objects.count(), 1)
         series = Series.objects.get()
 
-        self.assertEqual(series.title, 'Unrelated series')
+        self.assertEqual(series.title, "Unrelated series")
 
         self.assertEqual(Post.objects.count(), 1)
         post = Post.objects.get()
-        self.assertEqual(post.title, 'New blog post')
+        self.assertEqual(post.title, "New blog post")
 
         # The relation between post and series IS NOT done by the
         # ModelFormField. It only takes care of nesting. The relation can be
@@ -81,51 +83,59 @@ class FormFieldTests(TestCase):
         self.assertEqual(post.series, None)
 
     def test_override_get_instance(self):
-        existing_series = Series.objects.create(title='Existing series')
+        existing_series = Series.objects.create(title="Existing series")
 
         superform = UseExistingSeriesPostForm()
-        self.assertEqual(superform.forms['existing_series'].instance,
-                         existing_series)
-        self.assertEqual(superform.forms['existing_series']['title'].value(),
-                         'Existing series')
+        self.assertEqual(superform.forms["existing_series"].instance, existing_series)
+        self.assertEqual(
+            superform.forms["existing_series"]["title"].value(), "Existing series"
+        )
 
     def test_save_existing_instance(self):
-        existing_series = Series.objects.create(title='Existing series')
+        existing_series = Series.objects.create(title="Existing series")
 
-        superform = UseExistingSeriesPostForm({
-            'title': 'Blog post',
-            'form-existing_series-title': 'Changed name',
-        })
+        superform = UseExistingSeriesPostForm(
+            {
+                "title": "Blog post",
+                "form-existing_series-title": "Changed name",
+            }
+        )
         superform.save()
 
         changed_series = Series.objects.get()
         self.assertEqual(changed_series.pk, existing_series.pk)
-        self.assertEqual(changed_series.title, 'Changed name')
+        self.assertEqual(changed_series.title, "Changed name")
 
     def test_required(self):
-        form = PostForm({
-            'title': 'New blog post',
-            'form-series-title': '',
-        })
+        form = PostForm(
+            {
+                "title": "New blog post",
+                "form-series-title": "",
+            }
+        )
         form.full_clean()
 
         self.assertFalse(form.is_valid())
-        self.assertTrue('required' in str(form.errors['series']['title']))
+        self.assertTrue("required" in str(form.errors["series"]["title"]))
 
         # Test when key is not in data.
-        form = PostForm({
-            'title': 'New blog post',
-        })
+        form = PostForm(
+            {
+                "title": "New blog post",
+            }
+        )
         form.full_clean()
 
         self.assertFalse(form.is_valid())
-        self.assertTrue('required' in str(form.errors['series']['title']))
+        self.assertTrue("required" in str(form.errors["series"]["title"]))
 
     def test_not_required(self):
-        form = UnrequiredSeriesPostForm({
-            'title': 'New blog post',
-            'form-series-title': '',
-        })
+        form = UnrequiredSeriesPostForm(
+            {
+                "title": "New blog post",
+                "form-series-title": "",
+            }
+        )
         form.full_clean()
 
         self.assertTrue(form.is_valid())
@@ -135,10 +145,12 @@ class FormFieldTests(TestCase):
         self.assertEqual(Series.objects.count(), 0)
 
     def test_form_render(self):
-        form = PostForm(initial={
-            'series': {
-                'title': 'my title',
-            },
-        })
-        rendered = Template('{{ form.series }}').render(Context({'form': form}))
+        form = PostForm(
+            initial={
+                "series": {
+                    "title": "my title",
+                },
+            }
+        )
+        rendered = Template("{{ form.series }}").render(Context({"form": form}))
         assert 'value="my title"' in rendered
