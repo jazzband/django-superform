@@ -155,9 +155,9 @@ Full documentation is available on Read the Docs: https://django-superform.readt
 .. _Changelog: https://django-superform.readthedocs.org/en/latest/changelog.html
 .. _Documentation: https://django-superform.readthedocs.org/
 
-.. |build| image:: https://travis-ci.org/gregmuellegger/django-superform.svg?branch=master
+.. |build| image:: https://github.com/jazzband/django-superform/actions/workflows/pipeline.yml/badge.svg
     :alt: Build Status
-    :target: https://travis-ci.org/gregmuellegger/django-superform
+    :target: https://github.com/jazzband/django-superform/actions
 .. |package| image:: https://badge.fury.io/py/django-superform.svg
     :alt: Package Version
     :target: http://badge.fury.io/py/django-superform
