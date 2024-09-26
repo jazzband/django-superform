@@ -13,3 +13,4 @@ repos:
     rev: 7.1.1
     hooks:
       - id: flake8
+        args: [--extend-ignore=E203, --extend-ignore=E501, --extend-ignore=W605, --extend-ignore=W504, --extend-ignore=E265, --extend-ignore=W503]

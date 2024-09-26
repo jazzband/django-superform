@@ -159,9 +159,10 @@ class FormField(CompositeField):
     prefix_name = "form"
     widget = FormWidget
 
-    def __init__(self, form_class, kwargs=None, **field_kwargs):
+    def __init__(self, form_class, kwargs=None, initial=None, **field_kwargs):
         super(FormField, self).__init__(**field_kwargs)
 
+        self.initial = initial
         self.form_class = form_class
         if kwargs is None:
             kwargs = {}
@@ -180,11 +181,18 @@ class FormField(CompositeField):
         Get an instance of the form.
         """
         kwargs = self.get_kwargs(form, name)
+        kwargs.update(
+            {
+                "use_required_attribute": (
+                    False if kwargs.get("empty_permitted", False) is True else True
+                )
+            }
+        )
         form_class = self.get_form_class(form, name)
         composite_form = form_class(
             data=form.data if form.is_bound else None,
             files=form.files if form.is_bound else None,
-            **kwargs
+            **kwargs,
         )
         return composite_form
 
@@ -289,9 +297,15 @@ class ModelFormField(FormField):
 
 class ForeignKeyFormField(ModelFormField):
     def __init__(
-        self, form_class, kwargs=None, field_name=None, blank=None, **field_kwargs
+        self,
+        form_class,
+        initial=None,
+        kwargs=None,
+        field_name=None,
+        blank=None,
+        **field_kwargs,
     ):
-        super(ForeignKeyFormField, self).__init__(form_class, kwargs, **field_kwargs)
+        super().__init__(form_class, kwargs, **field_kwargs)
         self.field_name = field_name
         self.blank = blank
 
@@ -358,9 +372,10 @@ class FormSetField(CompositeField):
     prefix_name = "formset"
     widget = FormSetWidget
 
-    def __init__(self, formset_class, kwargs=None, **field_kwargs):
+    def __init__(self, formset_class, initial=None, kwargs=None, **field_kwargs):
         super(FormSetField, self).__init__(**field_kwargs)
 
+        self.initial = initial
         self.formset_class = formset_class
         if kwargs is None:
             kwargs = {}
@@ -383,7 +398,7 @@ class FormSetField(CompositeField):
         formset = formset_class(
             form.data if form.is_bound else None,
             form.files if form.is_bound else None,
-            **kwargs
+            **kwargs,
         )
         return formset
 
@@ -447,11 +462,12 @@ class InlineFormSetField(ModelFormSetField):
 
     def __init__(
         self,
+        initial=None,
         parent_model=None,
         model=None,
         formset_class=None,
         kwargs=None,
-        **factory_kwargs
+        **factory_kwargs,
     ):
         """
         You need to either provide the ``formset_class`` or the ``model``
@@ -506,7 +522,7 @@ class InlineFormSetField(ModelFormSetField):
         formset_class = inlineformset_factory(
             self.get_parent_model(form, name),
             self.get_model(form, name),
-            **self.formset_factory_kwargs
+            **self.formset_factory_kwargs,
         )
         return formset_class
 

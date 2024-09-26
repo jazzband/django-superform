@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5.0
+-----
+* Upgrades functionality for Django 4.2+
+* Forked and taken over by Peter Natale
+
 0.4.0
 -----
 * Fix formset rendering in Django 1.9. `#17`_

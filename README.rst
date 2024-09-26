@@ -18,8 +18,8 @@ view is usually quite troublesome. You need to validate both the form and the
 formset manually and you cannot use django's generic FormView_. So here comes
 **django-superform** into play.
 
-.. _formsets: https://docs.djangoproject.com/en/1.10/topics/forms/formsets/
-.. _FormView: https://docs.djangoproject.com/en/1.10/ref/class-based-views/generic-editing/#formview
+.. _formsets: https://docs.djangoproject.com/en/5.1/topics/forms/formsets/
+.. _FormView: https://docs.djangoproject.com/en/5.1/ref/class-based-views/generic-editing/#formview
 
 Here we have an example for the usecase. Let's have a look at the
 ``forms.py``:
@@ -37,13 +37,39 @@ Here we have an example for the usecase. Let's have a look at the
             fields = ('account', 'email',)
 
 
-    EmailFormSet = modelformset_factory(EmailForm)
+    EmailFormSet = forms.models.modelformset_factory(EmailForm)
 
 
     class SignupForm(SuperModelForm):
         username = forms.CharField()
         # The model `Email` has a ForeignKey called `user` to `Account`.
         emails = InlineFormSetField(formset_class=EmailFormSet)
+
+        class Meta:
+            model = Account
+            fields = ('username',)
+
+
+Alternatively, if you did not wish to use a formset_factory, model or inline, for InlineFormSetField,
+you may pass it explicitly stated parent_model and model
+
+.. code-block:: python
+
+    from django import forms
+    from django_superform import SuperModelForm, InlineFormSetField
+    from myapp.models import Account, Email
+
+
+    class EmailForm(forms.ModelForm):
+        class Meta:
+            model = Email
+            fields = ('account', 'email')
+
+
+    class SignupForm(SuperModelForm):
+        username = foms.charField()
+        # The model `Email` has a ForeignKey called `user` to `Account`.
+        emails=InlineFormSetField(parent_model=Account, model=Email)
 
         class Meta:
             model = Account
@@ -97,8 +123,8 @@ And it just works.
 Requirements
 ------------
 
-- Python 2.7 or Python 3.3+ or PyPy
-- Django 1.4+
+- Python 3.8+ or PyPy
+- Django 4.2+
 
 .. _Installation:
 
@@ -107,7 +133,7 @@ Installation
 
 Install the desired version with pip_::
 
-    pip install django-superform
+    pip install django-superform4
 
 .. _pip: https://pip.pypa.io/en/stable/
 
@@ -124,7 +150,7 @@ Then add ``django-superform`` to ``INSTALLED_APPS`` in your settings file:
 Development
 -----------
 
-- Clone django-superform::
+- Clone django-superform4::
 
     git clone git@github.com:jazzband/django-superform.git
 

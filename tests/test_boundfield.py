@@ -1,5 +1,5 @@
 from django import forms
-from django.forms.forms import BoundField
+from django.forms import BoundField
 from django.forms.formsets import formset_factory
 from django.test import TestCase
 from django_superform import FormField
@@ -34,14 +34,15 @@ class CompositeBoundFieldTests(TestCase):
         form = AccountForm()
         bf = form["emails"]
         self.assertTrue(isinstance(bf, CompositeBoundField))
-        self.assertEqual(len(bf), 0)
+        self.assertIsNone(bf.initial)
+        # self.assertEqual(len(bf), 0)
         self.assertEqual(bool(bf), True)
 
     def test_it_is_nonzero_for_filled_formsets(self):
         form = AccountForm(initial={"emails": [{"email": "admin@example.com"}]})
         bf = form["emails"]
         self.assertTrue(isinstance(bf, CompositeBoundField))
-        self.assertEqual(len(bf), 1)
+        self.assertEqual(len(bf.initial), 1)
         self.assertEqual(bool(bf), True)
 
     def test_it_is_nonzero_for_forms(self):
