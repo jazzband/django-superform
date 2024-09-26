@@ -104,16 +104,17 @@ class DeclerativeCompositeFieldsMetaclass(type):
                 current_fields.append((key, value))
                 attrs.pop(key)
         current_fields.sort(key=lambda x: x[1].creation_counter)
-        attrs['declared_composite_fields'] = OrderedDict(current_fields)
+        attrs["declared_composite_fields"] = OrderedDict(current_fields)
 
         new_class = super(DeclerativeCompositeFieldsMetaclass, mcs).__new__(
-            mcs, name, bases, attrs)
+            mcs, name, bases, attrs
+        )
 
         # Walk through the MRO.
         declared_fields = OrderedDict()
         for base in reversed(new_class.__mro__):
             # Collect fields from base class.
-            if hasattr(base, 'declared_composite_fields'):
+            if hasattr(base, "declared_composite_fields"):
                 declared_fields.update(base.declared_composite_fields)
 
             # Field shadowing.
@@ -128,16 +129,14 @@ class DeclerativeCompositeFieldsMetaclass(type):
 
 
 class SuperFormMetaclass(
-        DeclerativeCompositeFieldsMetaclass,
-        DeclarativeFieldsMetaclass):
+    DeclerativeCompositeFieldsMetaclass, DeclarativeFieldsMetaclass
+):
     """
     Metaclass for :class:`~django_superform.forms.SuperForm`.
     """
 
 
-class SuperModelFormMetaclass(
-        DeclerativeCompositeFieldsMetaclass,
-        ModelFormMetaclass):
+class SuperModelFormMetaclass(DeclerativeCompositeFieldsMetaclass, ModelFormMetaclass):
     """
     Metaclass for :class:`~django_superform.forms.SuperModelForm`.
     """
@@ -198,16 +197,16 @@ class SuperFormMixin(object):
         Return the form/formset instance for the given field name.
         """
         field = self.composite_fields[name]
-        if hasattr(field, 'get_form'):
+        if hasattr(field, "get_form"):
             return self.forms[name]
-        if hasattr(field, 'get_formset'):
+        if hasattr(field, "get_formset"):
             return self.formsets[name]
 
     def _init_composite_field(self, name, field):
-        if hasattr(field, 'get_form'):
+        if hasattr(field, "get_form"):
             form = field.get_form(self, name)
             self.forms[name] = form
-        if hasattr(field, 'get_formset'):
+        if hasattr(field, "get_formset"):
             formset = field.get_formset(self, name)
             self.formsets[name] = formset
 
@@ -308,7 +307,7 @@ class SuperModelFormMixin(SuperFormMixin):
     def _extend_save_m2m(self, name, composites):
         additional_save_m2m = []
         for composite in composites:
-            if hasattr(composite, 'save_m2m'):
+            if hasattr(composite, "save_m2m"):
                 additional_save_m2m.append(composite.save_m2m)
 
         if not additional_save_m2m:
@@ -320,9 +319,10 @@ class SuperModelFormMixin(SuperFormMixin):
 
         # The save() method was called before save_forms()/save_formsets(), so
         # we will already have save_m2m() available.
-        if hasattr(self, 'save_m2m'):
+        if hasattr(self, "save_m2m"):
             _original_save_m2m = self.save_m2m
         else:
+
             def _original_save_m2m():
                 return None
 
@@ -349,11 +349,11 @@ class SuperModelFormMixin(SuperFormMixin):
         saved_composites = []
         for name, composite in self.forms.items():
             field = self.composite_fields[name]
-            if hasattr(field, 'save'):
+            if hasattr(field, "save"):
                 field.save(self, name, composite, commit=commit)
                 saved_composites.append(composite)
 
-        self._extend_save_m2m('save_forms_m2m', saved_composites)
+        self._extend_save_m2m("save_forms_m2m", saved_composites)
 
     def save_formsets(self, commit=True):
         """
@@ -364,14 +364,16 @@ class SuperModelFormMixin(SuperFormMixin):
         saved_composites = []
         for name, composite in self.formsets.items():
             field = self.composite_fields[name]
-            if hasattr(field, 'save'):
+            if hasattr(field, "save"):
                 field.save(self, name, composite, commit=commit)
                 saved_composites.append(composite)
 
-        self._extend_save_m2m('save_formsets_m2m', saved_composites)
+        self._extend_save_m2m("save_formsets_m2m", saved_composites)
 
 
-class SuperModelForm(SuperModelFormMixin, forms.ModelForm, metaclass=SuperModelFormMetaclass):
+class SuperModelForm(
+    SuperModelFormMixin, forms.ModelForm, metaclass=SuperModelFormMetaclass
+):
     """
     The ``SuperModelForm`` works like a Django ``ModelForm`` but has the
     capabilities of nesting like :class:`~django_superform.forms.SuperForm`.

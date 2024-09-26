@@ -19,7 +19,7 @@ class Post(models.Model):
 
 
 class Image(models.Model):
-    post = models.ForeignKey(Post, related_name='images', on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name="images", on_delete=models.CASCADE)
 
     name = models.CharField(max_length=50)
     position = models.PositiveIntegerField(default=0)
@@ -28,4 +28,4 @@ class Image(models.Model):
     image_url = models.URLField()
 
     class Meta:
-        ordering = ('position',)
+        ordering = ("position",)

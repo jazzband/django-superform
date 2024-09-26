@@ -3,6 +3,8 @@ django-superform
 
 **Less sucking formsets.**
 
+|build| |package| |jazzband|
+
 Documentation_ | Changelog_ | Requirements_ | Installation_
 
 A ``SuperForm`` is absolutely super if you want to nest a lot of forms in each
@@ -63,7 +65,7 @@ you may pass it explicitly stated parent_model and model
             model = Email
             fields = ('account', 'email')
 
-    
+
     class SignupForm(SuperModelForm):
         username = foms.charField()
         # The model `Email` has a ForeignKey called `user` to `Account`.
@@ -150,7 +152,7 @@ Development
 
 - Clone django-superform4::
 
-    git clone git@github.com:panatale1/django-superform.git
+    git clone git@github.com:jazzband/django-superform.git
 
 - ``cd`` into the repository::
 
@@ -179,3 +181,12 @@ Full documentation is available on Read the Docs: https://django-superform.readt
 .. _Changelog: https://django-superform.readthedocs.org/en/latest/changelog.html
 .. _Documentation: https://django-superform.readthedocs.org/
 
+.. |build| image:: https://travis-ci.org/gregmuellegger/django-superform.svg?branch=master
+    :alt: Build Status
+    :target: https://travis-ci.org/gregmuellegger/django-superform
+.. |package| image:: https://badge.fury.io/py/django-superform.svg
+    :alt: Package Version
+    :target: http://badge.fury.io/py/django-superform
+.. |jazzband| image:: https://jazzband.co/static/img/badge.svg
+    :target: https://jazzband.co
+    :alt: Jazzband

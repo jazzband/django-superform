@@ -14,7 +14,7 @@ class TemplateWidget(forms.Widget):
     value_context_name = None
 
     def __init__(self, *args, **kwargs):
-        template_name = kwargs.pop('template_name', None)
+        template_name = kwargs.pop("template_name", None)
         if template_name is not None:
             self.template_name = template_name
         super(TemplateWidget, self).__init__(*args, **kwargs)
@@ -26,28 +26,28 @@ class TemplateWidget(forms.Widget):
     def get_context(self, name, value, attrs=None):
         context = super().get_context(name, value, attrs)
         if self.value_context_name:
-            context['widget'][self.value_context_name] = value
+            context["widget"][self.value_context_name] = value
 
         context.update(self.get_context_data())
 
         return context
 
     def render(self, name, value, attrs=None, renderer=None, **kwargs):
-        template_name = kwargs.pop('template_name', None)
+        template_name = kwargs.pop("template_name", None)
         if template_name is None:
             template_name = self.template_name
         context = self.get_context(name, value, attrs=attrs or {}, **kwargs)
         return loader.render_to_string(
             template_name,
-            context=context['widget'],
+            context=context["widget"],
         )
 
 
 class FormWidget(TemplateWidget):
-    template_name = 'superform/formfield.html'
-    value_context_name = 'form'
+    template_name = "superform/formfield.html"
+    value_context_name = "form"
 
 
 class FormSetWidget(TemplateWidget):
-    template_name = 'superform/formsetfield.html'
-    value_context_name = 'formset'
+    template_name = "superform/formsetfield.html"
+    value_context_name = "formset"
