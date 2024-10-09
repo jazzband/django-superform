@@ -27,7 +27,7 @@ setup(
     author_email="gregor@muellegger.de",
     packages=find_packages(),
     include_package_data=True,
-    url="https://github.com/gregmuellegger/django-superform",
+    url="https://github.com/jazzband/django-superform",
     license="BSD licence, see LICENSE file",
     description="So much easier handling of formsets.",
     long_description="\n\n".join((read("README.rst"), read("CHANGES.rst"))),

@@ -25,9 +25,9 @@ Changelog
 * Do not populate errorlist representations without any errors of nested
   formsets into the errors of the super form. See `#5`_ for details.
 
-.. _#3: https://github.com/gregmuellegger/django-superform/issues/3
-.. _#5: https://github.com/gregmuellegger/django-superform/pull/5
-.. _#11: https://github.com/gregmuellegger/django-superform/issues/11
+.. _#3: https://github.com/jazzband/django-superform/issues/3
+.. _#5: https://github.com/jazzband/django-superform/pull/5
+.. _#11: https://github.com/jazzband/django-superform/issues/11
 
 0.2.0
 -----

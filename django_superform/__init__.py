@@ -8,7 +8,7 @@
 
 
 Author: Gregor Müllegger <gregor@muellegger.de>
-Project home: https://github.com/gregmuellegger/django-superform
+Project home: https://github.com/jazzband/django-superform
 See http://django-superform.readthedocs.org/en/latest/ for complete docs.
 """
 from .fields import (
