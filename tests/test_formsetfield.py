@@ -5,7 +5,6 @@ from django_superform import SuperModelForm, ModelFormSetField, InlineFormSetFie
 
 from .models import Post, Image
 
-
 ImageFormSet = modelformset_factory(Image, fields=["name"])
 
 
